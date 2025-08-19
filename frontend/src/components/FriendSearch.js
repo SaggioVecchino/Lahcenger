@@ -124,7 +124,13 @@ export default function FriendSearch({
     setQuery("");
   };
 
-  useClickOutside(searchRef, clearSearchResults);
+  useClickOutside(searchRef, () => {
+    if (keepFocus) clearSearchResults();
+  });
+
+  useEffect(() => {
+    if (query === "" && !resultsCleared) clearSearchResults();
+  }, [query]);
 
   return (
     <div>
