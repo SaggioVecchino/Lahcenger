@@ -38,7 +38,8 @@ header h2 {
 
 .logout-btn a:hover,
 .logout-btn a:focus,
-.logout-btn a:focus-visible {
+.logout-btn a:focus-visible,
+.logout-btn a:active {
   transform: translateX(120px);
 }
 
@@ -103,17 +104,19 @@ input[type="search"]::-webkit-search-cancel-button {
 .results-search {
   overflow: visible;
   height: 0;
-  width: 100%;
+  width: 0;
   position: relative;
 }
 
 .results-search > div {
   border: #4267b2 2px solid;
-  padding: 3px;
+  padding: 5px;
   box-sizing: border-box;
   margin-top: 15px;
   background: white;
-  width: 100%;
+  width: max-content;
+  min-width: 250px;
+  max-width: 400px;
   display: inline-block;
   max-height: 200px;
   overflow-y: scroll;

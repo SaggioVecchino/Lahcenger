@@ -2,6 +2,7 @@ import { useEffect, useState, useRef } from "react";
 import { useAuth } from "../AuthContext";
 import { sleep } from "../services/utils";
 import { useClickOutside } from "../services/utils";
+import { ResultPersonSearch } from "./ResultPersonSearch";
 
 export default function FriendSearch({
   alreadyRequested,
@@ -81,7 +82,7 @@ export default function FriendSearch({
 
   const helperRender = (other_user) => {
     if (alreadyFriends.map((friend) => friend.id).includes(other_user.id)) {
-      return <>(Already friend)</>;
+      return <ResultPersonSearch user={other_user} isFriend={true} />;
     } else if (
       alreadyRequested.map((req) => req.to_user_id).includes(other_user.id)
     ) {
@@ -89,10 +90,11 @@ export default function FriendSearch({
         (req) => req.to_user_id === other_user.id
       )[0];
       return (
-        <>
-          Already requested
-          <button onClick={() => cancelRequest(r)}>Cancel request</button>
-        </>
+        <ResultPersonSearch
+          user={other_user}
+          sentRequest={r}
+          cancelRequest={cancelRequest}
+        />
       );
     } else if (
       alreadyReceivedRequests
@@ -102,17 +104,9 @@ export default function FriendSearch({
       const r = alreadyReceivedRequests.filter(
         (r) => r.from_user_id === other_user.id
       )[0];
-      return (
-        <>
-          This user sent you a friend request
-          <button onClick={() => acceptRequest(r)}>Accept</button>
-          <button onClick={() => rejectRequest(r)}>Reject</button>
-        </>
-      );
+      return <ResultPersonSearch user={other_user} recivedRequestRequest={r} />;
     } else {
-      return (
-        <button onClick={() => addFriend(other_user)}>Add as a friend</button>
-      );
+      return <ResultPersonSearch user={other_user} addFriend={addFriend} />;
     }
   };
 
@@ -174,10 +168,7 @@ export default function FriendSearch({
                 ) : (
                   <>
                     {results.map((other_user) => (
-                      <span key={other_user.id}>
-                        <p>{other_user.username}</p>
-                        {helperRender(other_user)}
-                      </span>
+                      <div key={other_user.id}>{helperRender(other_user)}</div>
                     ))}
                   </>
                 )}
