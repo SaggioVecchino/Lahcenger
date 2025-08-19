@@ -21,7 +21,8 @@ header h2 {
 
 .logout-btn {
   overflow: hidden;
-  width: fit-content;
+  width: 33vw;
+  max-width: 250px;
 }
 
 .logout-btn a {
@@ -30,7 +31,7 @@ header h2 {
   font-size: 1.5em;
 
   display: inline-block;
-  transform: translateX(70%);
+  transform: translateX(212px);
   transition: transform 0.3s ease;
   white-space: nowrap;
 }
@@ -38,7 +39,7 @@ header h2 {
 .logout-btn a:hover,
 .logout-btn a:focus,
 .logout-btn a:focus-visible {
-  transform: translateX(0%);
+  transform: translateX(120px);
 }
 
 @media (max-width: 400px) {
@@ -52,7 +53,7 @@ header h2 {
 }
 
 .form-search {
-  width: 33vh;
+  width: 33vw;
   max-width: 250px;
   min-width: 190px;
   margin-left: 5px;
@@ -117,4 +118,17 @@ input[type="search"]::-webkit-search-cancel-button {
   max-height: 200px;
   overflow-y: scroll;
   visibility: hidden;
+}
+
+.results-search > div::-webkit-scrollbar {
+  width: 3px;
+}
+
+.results-search > div::-webkit-scrollbar-track {
+  -webkit-box-shadow: inset 0 0 1px rgba(0, 0, 0, 0.3);
+}
+
+.results-search > div::-webkit-scrollbar-thumb {
+  background-color: darkgrey;
+  outline: 1px solid slategrey;
 }
