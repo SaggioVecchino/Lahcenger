@@ -50,8 +50,9 @@ export const AuthProvider = ({ children }) => {
   };
 
   const logout = async () => {
-    await apiFetch("http://localhost:5000/logout", { method: "POST" });
+    //The important is important here
     deleteSessionInfos();
+    await apiFetch("http://localhost:5000/logout", { method: "POST" });
   };
 
   const apiFetch = async (url, opts = {}) => {

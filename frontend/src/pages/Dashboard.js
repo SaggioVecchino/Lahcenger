@@ -27,7 +27,7 @@ export default function Dashboard() {
   }, [token]);
 
   useEffect(() => {
-    if (socket !== null) {
+    if (socket !== null && user !== null) {
       const handler = ({ sender_id, recipient_id, sender_username }) => {
         if (sender_id === user.id || recipient_id !== user.id) return;
         if (
