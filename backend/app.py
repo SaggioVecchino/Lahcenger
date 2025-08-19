@@ -562,6 +562,9 @@ def handle_send_message(data):
             )
             return
 
+    if content:
+        content = content.strip()
+
     msg = Message(
         sender_id=sender.id,
         recipient_id=recipient_id,
