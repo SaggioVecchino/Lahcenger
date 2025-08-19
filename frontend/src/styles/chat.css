@@ -1,3 +1,19 @@
+.chat-window {
+  margin: 0 8px;
+  margin-bottom: 4px;
+}
+
+.chat-window header {
+  background-color: #4267b2;
+  color: white;
+  height: fit-content;
+  min-height: 50px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 2px;
+}
+
 .me-sender,
 .me-receiver {
   min-width: 10px;
@@ -34,7 +50,6 @@
   border: 1px solid #4267b2;
   height: 200px;
   overflow-y: scroll;
-  margin: 0 5px;
   background-color: aliceblue;
   padding: 3px 4px;
 }
@@ -50,4 +65,47 @@
 .conversation::-webkit-scrollbar-thumb {
   background-color: darkgrey;
   outline: 1px solid slategrey;
+}
+
+.chat-input {
+  display: inline-block;
+  resize: none;
+  height: max-content;
+  max-height: 120px;
+  width: 400px;
+  overflow: auto;
+}
+
+.chat-input::-webkit-scrollbar {
+  width: 0px;
+}
+
+.send-message-button {
+  display: inline-block;
+}
+
+.send-message-button > div {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.send-message-button a {
+  text-decoration: none;
+  color: white;
+  font-size: 2.5em;
+  margin-bottom: 20px;
+}
+
+.chat-input-container {
+  height: fit-content;
+}
+
+.chat-input-container form {
+  display: flex;
+  align-items: center;
+}
+
+.chat-input {
+  width: 100%;
 }

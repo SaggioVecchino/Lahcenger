@@ -24,33 +24,27 @@ export default function FriendSearch({
   const [resultsCleared, setResultsCleared] = useState(true);
   const [results, setResults] = useState([]);
   const searchRef = useRef([]);
-  const [socketHandlers, setSocketHandlers] = useState([
+
+  const socketHandlers = [
     { event: "request_accepted", handler: onAcceptedSentRequest },
     { event: "request_rejected", handler: onRejectedSentRequest },
     { event: "request_canceled", handler: onCanceledRequest },
     { event: "new_request", handler: onReceivedRequest },
-  ]);
+  ];
   const [keepFocus, setKeepFocus] = useState(false);
 
   useEffect(() => {
+    console.log("onMounted FriendSearch");
     searchRef.current[1].style.visibility = "hidden";
+    searchRef.current[0].addEventListener("keydown", (e) => {
+      if (e.key === "Escape") {
+        clearSearchResults();
+      }
+    });
   }, []);
 
   useEffect(() => {
-    setSocketHandlers([
-      { event: "request_accepted", handler: onAcceptedSentRequest },
-      { event: "request_rejected", handler: onRejectedSentRequest },
-      { event: "request_canceled", handler: onCanceledRequest },
-      { event: "new_request", handler: onReceivedRequest },
-    ]);
-  }, [
-    onAcceptedSentRequest,
-    onRejectedSentRequest,
-    onCanceledRequest,
-    onReceivedRequest,
-  ]);
-
-  useEffect(() => {
+    console.log("rendered FriendSearch");
     if (socket !== null) {
       socketHandlers.forEach(({ event, handler }) => socket.on(event, handler));
       return () =>
@@ -58,7 +52,7 @@ export default function FriendSearch({
           socket.off(event, handler)
         );
     }
-  }, [socket, socketHandlers]);
+  });
 
   const searchForFriend = async (query) => {
     if (loading) return;
@@ -83,9 +77,8 @@ export default function FriendSearch({
   const helperRender = (other_user) => {
     if (alreadyFriends.map((friend) => friend.id).includes(other_user.id)) {
       return <ResultPersonSearch user={other_user} isFriend={true} />;
-    } else if (
-      alreadyRequested.map((req) => req.to_user_id).includes(other_user.id)
-    ) {
+    }
+    if (alreadyRequested.map((req) => req.to_user_id).includes(other_user.id)) {
       const r = alreadyRequested.filter(
         (req) => req.to_user_id === other_user.id
       )[0];
@@ -96,7 +89,8 @@ export default function FriendSearch({
           cancelRequest={cancelRequest}
         />
       );
-    } else if (
+    }
+    if (
       alreadyReceivedRequests
         .map((req) => req.from_user_id)
         .includes(other_user.id)
@@ -104,10 +98,16 @@ export default function FriendSearch({
       const r = alreadyReceivedRequests.filter(
         (r) => r.from_user_id === other_user.id
       )[0];
-      return <ResultPersonSearch user={other_user} recivedRequestRequest={r} />;
-    } else {
-      return <ResultPersonSearch user={other_user} addFriend={addFriend} />;
+      return (
+        <ResultPersonSearch
+          user={other_user}
+          recivedRequestRequest={r}
+          acceptRequest={acceptRequest}
+          rejectRequest={rejectRequest}
+        />
+      );
     }
+    return <ResultPersonSearch user={other_user} addFriend={addFriend} />;
   };
 
   const clearSearchResults = () => {
@@ -121,10 +121,6 @@ export default function FriendSearch({
   useClickOutside(searchRef, () => {
     if (keepFocus) clearSearchResults();
   });
-
-  useEffect(() => {
-    if (query === "" && !resultsCleared) clearSearchResults();
-  }, [query]);
 
   return (
     <div>

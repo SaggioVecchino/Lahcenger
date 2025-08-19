@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useEffect } from "react";
+import { createContext, useContext, useState, useEffect } from "react";
 
 const AuthContext = createContext();
 
@@ -8,8 +8,8 @@ export const AuthProvider = ({ children }) => {
 
   const deleteSessionInfos = () => {
     localStorage.removeItem("user_infos");
-    setToken("");
     setUser(null);
+    setToken("");
   };
 
   const setSessionInfos = ({ token, id, username }) => {
@@ -26,8 +26,8 @@ export const AuthProvider = ({ children }) => {
 
   useEffect(() => {
     const { token, id, username } = getSessionInfos();
-    setToken(token);
     setUser({ id, username });
+    setToken(token);
   }, []);
 
   const login = async (username, password) => {
@@ -55,6 +55,7 @@ export const AuthProvider = ({ children }) => {
   };
 
   const apiFetch = async (url, opts = {}) => {
+    if (token === null || token === "") return;
     try {
       let res = await fetch(url, {
         ...opts,
