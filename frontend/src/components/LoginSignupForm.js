@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import "../styles/login_signup.css";
 
 export default function LoginSignupForm({ onSubmit, isLoginPage }) {
