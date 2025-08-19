@@ -1,0 +1,11 @@
+Flask>=2.2
+Flask-SQLAlchemy>=3.0
+Flask-Migrate>=4.0
+Flask-SocketIO>=5.3
+python-engineio>=4.3
+python-socketio>=5.6
+bcrypt>=4.0
+PyJWT>=2.7
+eventlet>=0.33
+gunicorn>=21.2
+uuid>=1.30
