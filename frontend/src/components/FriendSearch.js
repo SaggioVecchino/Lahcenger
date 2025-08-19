@@ -34,7 +34,6 @@ export default function FriendSearch({
   const [keepFocus, setKeepFocus] = useState(false);
 
   useEffect(() => {
-    console.log("onMounted FriendSearch");
     searchRef.current[1].style.visibility = "hidden";
     searchRef.current[0].addEventListener("keydown", (e) => {
       if (e.key === "Escape") {
@@ -44,7 +43,6 @@ export default function FriendSearch({
   }, []);
 
   useEffect(() => {
-    console.log("rendered FriendSearch");
     if (socket !== null) {
       socketHandlers.forEach(({ event, handler }) => socket.on(event, handler));
       return () =>
@@ -67,9 +65,7 @@ export default function FriendSearch({
           }).toString()
       );
       setResults(res);
-    } catch (error) {
-      console.log("Try again in few moments please");
-    }
+    } catch (error) {}
     setResultsCleared(false);
     setLoading(false);
   };
