@@ -1,0 +1,40 @@
+.me-sender,
+.me-receiver {
+  min-width: 200px;
+  max-width: 450px;
+  margin: 2px 2px;
+  padding: 8px;
+  display: block;
+  color: white;
+  border-radius: 17px;
+}
+
+.me-sender {
+  background: #4267b2;
+}
+
+.me-receiver {
+  background: #575757;
+}
+
+.me-sender-container,
+.me-receiver-container {
+  display: flex;
+}
+
+.me-sender-container {
+  justify-content: flex-end;
+}
+
+.me-receiver-container {
+  justify-content: flex-start;
+}
+
+.conversation {
+  border: 1px solid #4267b2;
+  height: 200px;
+  overflow-y: scroll;
+  margin: 0 5px;
+  background-color: aliceblue;
+  padding: 3px 4px;
+}

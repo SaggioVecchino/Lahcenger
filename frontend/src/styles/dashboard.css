@@ -1,0 +1,120 @@
+header {
+  background-color: #4267b2;
+  height: 60px;
+  padding: 5px 2px;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  justify-content: space-between;
+  align-items: center;
+}
+
+header h2 {
+  margin: 0;
+  font-size: 1.5em;
+  margin-block-start: 0;
+  margin-block-end: 0;
+  margin-inline-start: 0;
+  margin-inline-end: 0;
+  color: white;
+}
+
+.logout-btn {
+  overflow: hidden;
+  width: fit-content;
+}
+
+.logout-btn a {
+  text-decoration: none;
+  color: white;
+  font-size: 1.5em;
+
+  display: inline-block;
+  transform: translateX(70%);
+  transition: transform 0.3s ease;
+  white-space: nowrap;
+}
+
+.logout-btn a:hover,
+.logout-btn a:focus,
+.logout-btn a:focus-visible {
+  transform: translateX(0%);
+}
+
+@media (max-width: 400px) {
+  .logout-btn {
+    width: 30px;
+  }
+  .logout-btn a {
+    transition: transform none;
+    transform: translateX(0%);
+  }
+}
+
+.form-search {
+  width: 33vh;
+  max-width: 250px;
+  min-width: 190px;
+  margin-left: 5px;
+}
+
+#s {
+  margin-left: 3px;
+  background: rgba(0, 0, 0, 0.375)
+    url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABMAAAAUCAYAAABvVQZ0AAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAQBJREFUeNqslI0RgyAMhdENWIEVWMEVXIGO0BW6Ah2hHcGOoCPYEewINFzBe9IA9id37w4kfEZesHHOCSYUqSPJML+RJlELDwN1pMHxMZNMkr8RTgyz2YPH5LmtwXpIHkOFmKhIlxowDmYAycKnHAHYcTCsSpXOJCie6YWDnXKLGeHLN2stGaqDsXXrX3GFcYcLrfhjtKEhffQ792gYT2nT6pJDjCw4z7ZGdGipOIqNbXIwFUARmCbKpMfYxsWJBmCEDoW7+gYUTAU2s3HJrK3AJvMLkqGHFLgWXTckm+SfSQexs+tLRqwVfgvjgMsvMAT689S5M/sk/I14kO5PAQYAuk6L1q+EdHMAAAAASUVORK5CYII=)
+    no-repeat 14px 14px;
+  text-indent: 1em;
+  display: inline-block;
+  border: 0 none;
+  width: 0;
+  height: 3em;
+  border-radius: 3em;
+  -webkit-transition: 0.4s;
+  transition: 0.4s;
+  outline: none;
+  padding: 1em 1.5em;
+  cursor: pointer;
+  -webkit-appearance: none;
+  font-weight: inherit;
+  font-size: inherit;
+  font-family: inherit;
+  color: #999;
+  vertical-align: baseline;
+}
+input[type="search"]::-webkit-search-cancel-button {
+  -webkit-appearance: none;
+}
+
+#s:hover,
+#s:focus,
+#s .forced-focus {
+  background: #fff
+    url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABMAAAAUCAYAAABvVQZ0AAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAT5JREFUeNqsVLtOw0AQtIMlRJHCEhUVMg398QEUSZnSfILzCXxDPsFu6XAJHWnTcS1lWsprKdmLxtKwvjVBYaTV7cm+udnX5fPb+yyBSmwhVmK/FfPZLyjUPhI8YtXYi23EOovs7PzyevAbsWeoGg5HNUHsCipX8F9TZDOstVgLPxIsxW6w3sHv6dJ2StkLbh6IPtR/AWRfSIET20H9D2U1hfaAgxY2KMagcBSmg9/rmwx0lBqTzGfHoVfVHxXgXzCjHNRHnnHke4vMGc2q0RBR0GSeCLlpLaJGFWKUszVuib32nih7iTFrjXAPyGnQ48c3Gu5AOVlMtMk6NZuf+FiC+AIhV0T+pBQ5ntXceIJKqKko2duJ2TwoLAz5QTVnagJaXWEO8y/wSMuKH9RTJoCTHyNZFidOUEfNu/8WYAAOXUT04MOtlwAAAABJRU5ErkJggg==)
+    14px 14px no-repeat;
+}
+
+#s:focus,
+#s.forced-focus {
+  width: 100%;
+  cursor: text;
+}
+
+.results-search {
+  overflow: visible;
+  height: 0;
+  width: 100%;
+  position: relative;
+}
+
+.results-search > div {
+  border: #4267b2 2px solid;
+  padding: 3px;
+  box-sizing: border-box;
+  margin-top: 15px;
+  background: white;
+  width: 100%;
+  display: inline-block;
+  max-height: 200px;
+  overflow-y: scroll;
+  visibility: hidden;
+}

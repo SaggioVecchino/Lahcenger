@@ -1,0 +1,112 @@
+.login-signup button {
+  margin-top: 5px;
+}
+
+.min-width-300 {
+  min-width: 300px;
+}
+
+.bg-fb-blue {
+  background-color: #4267b2;
+}
+
+.container-center-sub {
+  display: flex;
+  flex-direction: column;
+  align-content: center;
+  justify-content: center;
+  align-items: center;
+}
+
+.height-filler {
+  height: 100%;
+  min-height: 100%;
+}
+
+.login-signup {
+  display: flex;
+  flex-direction: column;
+}
+
+.login-signup input {
+  position: relative;
+  cursor: text;
+  font-size: 14px;
+  line-height: 20px;
+  padding: 0 16px;
+  height: 48px;
+  background-color: #fff;
+  border: 2px solid #d6d6e7;
+  border-radius: 3px;
+  color: rgb(35, 38, 59);
+  box-shadow: inset 0 1px 4px 0 rgb(119 122 175 / 30%);
+  overflow: hidden;
+  transition: all 100ms ease-in-out;
+  outline: none;
+}
+
+.login-signup input:hover {
+  border-color: #5c5c5c;
+}
+
+.login-signup input:focus,
+.login-signup input:focus-visible {
+  border-color: #000000;
+}
+
+.login-signup * {
+  margin: 5px auto;
+}
+
+.login-signup button {
+  display: inline-block;
+  outline: 0;
+  border: 0;
+  cursor: pointer;
+  border-radius: 8px;
+  padding: 10px 24px 12px;
+  font-size: 18px;
+  font-weight: 700;
+  line-height: 1;
+  transition: all 200ms ease-in-out;
+  background: white;
+  color: #000000;
+  box-shadow: 0 0 0 3px #000000 inset;
+}
+
+.login-signup button:hover,
+.login-signup button:focus {
+  background: #000000;
+  color: white;
+  transform: translateY(-3px);
+}
+
+.login-signup input {
+  width: 220px;
+}
+
+.redirect-login-signup {
+  display: inline-block;
+  outline: 0;
+  text-align: center;
+  cursor: pointer;
+  padding: 0 13px;
+  vertical-align: top;
+  border-radius: 3px;
+  border: 1px solid transparent;
+  transition: all 0.3s ease;
+  background: #fff;
+  border-color: #e8e8e8;
+  color: #000;
+  font-weight: 600;
+  text-transform: uppercase;
+  line-height: 16px;
+  font-size: 11px;
+  text-decoration: none;
+}
+
+.redirect-login-signup:hover,
+.redirect-login-signup:focus {
+  color: white;
+  background: #000000;
+}
