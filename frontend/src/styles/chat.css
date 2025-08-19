@@ -23,6 +23,7 @@
   display: block;
   color: white;
   border-radius: 17px;
+  white-space: pre;
 }
 
 .me-sender {
