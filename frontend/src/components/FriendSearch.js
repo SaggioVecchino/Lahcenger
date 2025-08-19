@@ -23,7 +23,6 @@ export default function FriendSearch({
   const [resultsCleared, setResultsCleared] = useState(true);
   const [results, setResults] = useState([]);
   const searchRef = useRef([]);
-  // const resultsSearchDiv = useRef();
   const [socketHandlers, setSocketHandlers] = useState([
     { event: "request_accepted", handler: onAcceptedSentRequest },
     { event: "request_rejected", handler: onRejectedSentRequest },

@@ -73,12 +73,6 @@ export default function ChatWindow({ socket, friend_recipient, closeChat }) {
                   : "me-receiver"
               }
             >
-              {/* <b>
-                {m.sender_id === friend_recipient.id
-                  ? friend_recipient.username
-                  : "Me"}
-                :
-              </b>{" "} */}
               {m.content}
               {m.image_url && (
                 <img src={m.image_url} alt="" style={{ maxWidth: "400px" }} />
