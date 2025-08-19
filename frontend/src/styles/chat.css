@@ -1,6 +1,6 @@
 .me-sender,
 .me-receiver {
-  min-width: 200px;
+  min-width: 10px;
   max-width: 450px;
   margin: 2px 2px;
   padding: 8px;
