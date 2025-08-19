@@ -2,7 +2,7 @@ import { useNavigate } from "react-router-dom";
 import { useAuth } from "../AuthContext";
 import LoginSignupForm from "../components/LoginSignupForm";
 
-export default function Login({ initUsername = null, initPassword = null }) {
+export default function Login() {
   const navigate = useNavigate();
   const { login } = useAuth();
 
@@ -15,12 +15,5 @@ export default function Login({ initUsername = null, initPassword = null }) {
     }
   };
 
-  return (
-    <LoginSignupForm
-      onSubmit={handleSubmit}
-      isLoginPage={true}
-      initUsername={initUsername}
-      initPassword={initPassword}
-    />
-  );
+  return <LoginSignupForm onSubmit={handleSubmit} isLoginPage={true} />;
 }

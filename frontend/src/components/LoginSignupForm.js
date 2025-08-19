@@ -1,21 +1,9 @@
 import { useEffect, useState } from "react";
 import "../styles/login_signup.css";
 
-export default function LoginSignupForm({
-  onSubmit,
-  isLoginPage,
-  initUsername = null,
-  initPassword = null,
-}) {
+export default function LoginSignupForm({ onSubmit, isLoginPage }) {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-
-  useEffect(() => {
-    if (initUsername !== null && initPassword !== null) {
-      setUsername(initUsername);
-      setPassword(initPassword);
-    }
-  }, [initUsername, initPassword]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
