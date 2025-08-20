@@ -22,7 +22,7 @@ header h2 {
 .logout-btn {
   overflow: hidden;
   width: 33vw;
-  max-width: 250px;
+  max-width: 200px;
 }
 
 .logout-btn a {
@@ -30,8 +30,8 @@ header h2 {
   color: white;
   font-size: 1.5em;
   display: inline-block;
-  transform: translateX(212px);
-  transition: transform 0.3s ease;
+  transform: translateX(162px);
+  transition: transform 0.3s ease, color 1s ease;
   white-space: nowrap;
 }
 
@@ -39,7 +39,8 @@ header h2 {
 .logout-btn a:focus,
 .logout-btn a:focus-visible,
 .logout-btn a:active {
-  transform: translateX(120px);
+  transform: translateX(80px);
+  color: darkblue;
 }
 
 @media (max-width: 400px) {
