@@ -24,6 +24,7 @@
   color: white;
   border-radius: 17px;
   white-space: pre-wrap;
+  overflow-wrap: break-word;
 }
 
 .me-sender {
