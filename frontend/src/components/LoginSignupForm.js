@@ -17,6 +17,7 @@ export default function LoginSignupForm({ onSubmit, isLoginPage }) {
           value={username}
           onChange={(e) => setUsername(e.target.value)}
           placeholder="Username"
+          autocapitalize="none"
         />
         <input
           type="password"
