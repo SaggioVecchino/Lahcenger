@@ -53,7 +53,7 @@ export default function ChatWindow({ socket, friend_recipient, closeChat }) {
   }, [loadedMessages]);
 
   useEffect(() => {
-    if (socket !== null) {
+    if (socket != null) {
       const handler = (payload) => {
         if (
           payload.sender_id === friend_recipient?.id ||

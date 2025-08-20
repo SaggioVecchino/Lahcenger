@@ -13,7 +13,7 @@ export function ResultPersonSearch({
       return <span>(Already friend)</span>;
     }
 
-    if (sentRequest !== null) {
+    if (sentRequest != null) {
       return (
         <span>
           Already requested

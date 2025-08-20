@@ -232,6 +232,7 @@ def send_friend_request():
     if to_user_id == g.current_user.id:
         return jsonify({"message": "cannot friend yourself"}), 400
     to_user = User.query.get(to_user_id)
+    to_username = to_user.username
     if not to_user:
         return jsonify({"message": "user not found"}), 404
     # Check if already friends
@@ -252,15 +253,31 @@ def send_friend_request():
     fr = FriendRequest(from_user_id=g.current_user.id, to_user_id=to_user_id)
     db.session.add(fr)
     db.session.commit()
+
     room_recipient = _user_room(to_user_id)
+    room_sender = _user_room(g.current_user.id)
     emit(
         "new_request",
         {
             "request_id": fr.id,
             "from_user_id": g.current_user.id,
             "from_username": g.current_user.username,
+            "to_user_id": to_user_id,
+            "to_username": to_username,
         },
         room=room_recipient,
+        namespace="/",
+    )
+    emit(
+        "new_request",
+        {
+            "request_id": fr.id,
+            "from_user_id": g.current_user.id,
+            "from_username": g.current_user.username,
+            "to_user_id": to_user_id,
+            "to_username": to_username,
+        },
+        room=room_sender,
         namespace="/",
     )
     return jsonify({"message": "friend request sent", "request_id": fr.id}), 201
@@ -330,23 +347,39 @@ def respond_friend_request():
         f2 = Friendship(user_id=fr.to_user_id, friend_id=fr.from_user_id)
         db.session.add_all([f1, f2])
     db.session.commit()
+
+    # The logic here is reversed in sockets
     room_recipient = _user_room(fr.from_user_id)
+    room_sender = _user_room(fr.to_user_id)
+    responder_id = fr.to_user_id
+
+    # We emit to both, in case the respond user is on multiple devices
     if action == "accept":
         emit(
             "request_accepted",
-            {"request_id": request_id},
+            {"request_id": request_id, "responder_id": responder_id},
             room=room_recipient,
             namespace="/",
         )
-        pass
+        emit(
+            "request_accepted",
+            {"request_id": request_id, "responder_id": responder_id},
+            room=room_sender,
+            namespace="/",
+        )
     else:  # action == "reject"
         emit(
             "request_rejected",
-            {"request_id": request_id},
+            {"request_id": request_id, "responder_id": responder_id},
             room=room_recipient,
             namespace="/",
         )
-        pass
+        emit(
+            "request_rejected",
+            {"request_id": request_id, "responder_id": responder_id},
+            room=room_sender,
+            namespace="/",
+        )
     return jsonify({"message": f"friend request {fr.status}"}), 201
 
 
@@ -363,10 +396,19 @@ def cancel_sent_request():
     db.session.add(fr)
     db.session.commit()
     room_recipient = _user_room(fr.to_user_id)
+    room_sender = _user_room(g.current_user.id)
+
+    canceler_id = g.current_user.id
     emit(
         "request_canceled",
-        {"request_id": request_id},
+        {"request_id": request_id, "canceler_id": canceler_id},
         room=room_recipient,
+        namespace="/",
+    )
+    emit(
+        "request_canceled",
+        {"request_id": request_id, "canceler_id": canceler_id},
+        room=room_sender,
         namespace="/",
     )
     return jsonify({"message": f"Request canceled with success"}), 201

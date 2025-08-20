@@ -43,7 +43,7 @@ export default function FriendSearch({
   }, []);
 
   useEffect(() => {
-    if (socket !== null) {
+    if (socket != null) {
       socketHandlers.forEach(({ event, handler }) => socket.on(event, handler));
       return () =>
         socketHandlers.forEach(({ event, handler }) =>

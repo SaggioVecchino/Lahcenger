@@ -18,16 +18,16 @@ export default function Dashboard() {
   const [socket, setSocket] = useState(null);
 
   useEffect(() => {
-    if (user !== null) {
+    if (user != null) {
       const s = io("http://localhost:5000", { query: { token } });
       s.on("connected", () => {});
       setSocket(s);
       return () => s.disconnect();
     }
-  }, [token]);
+  }, [user, token]);
 
   useEffect(() => {
-    if (socket !== null && user !== null) {
+    if (socket != null && user != null) {
       const handler = ({ sender_id, recipient_id, sender_username }) => {
         if (sender_id === user.id || recipient_id !== user.id) return;
         if (
@@ -35,8 +35,8 @@ export default function Dashboard() {
         )
           return;
 
-        setSelectedFriends((prev) => [
-          ...prev,
+        setSelectedFriends([
+          ...selectedFriends,
           { id: sender_id, username: sender_username },
         ]);
       };
@@ -46,10 +46,11 @@ export default function Dashboard() {
         socket.off("new_message", handler);
       };
     }
-  }, [socket, user, selectedFriends]);
+  }, [socket, user, selectedFriends, setSelectedFriends]);
 
   const openFriendChat = (friend) => {
-    setSelectedFriends((prev) => [...prev, friend]);
+    if (!selectedFriends.map((friend) => friend.id).includes(friend.id))
+      setSelectedFriends([...selectedFriends, friend]);
   };
 
   const closeFriendChat = (friend) => {
@@ -92,18 +93,22 @@ export default function Dashboard() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ to_user_id: other_user.id }),
-      }).then((res) =>
-        setSentRequests((prev) => [
-          ...prev,
-          {
-            request_id: res.request_id,
-            to_user_id: other_user.id,
-            to_username: other_user.username,
-          },
-        ])
-      );
+      }).then((res) => {
+        if (
+          !sentRequests.map((req) => req.request_id).includes(res.request_id)
+        ) {
+          setSentRequests([
+            ...sentRequests,
+            {
+              request_id: res.request_id,
+              to_user_id: other_user.id,
+              to_username: other_user.username,
+            },
+          ]);
+        }
+      });
     },
-    [apiFetch, setSentRequests]
+    [apiFetch, sentRequests, setSentRequests]
   );
 
   const cancelRequest = useCallback(
@@ -112,6 +117,7 @@ export default function Dashboard() {
         method: "POST",
         body: JSON.stringify({ request_id: r.request_id }),
       }).then(
+        //no need to verify because it's a filter
         setSentRequests((prev) =>
           prev.filter((req) => req.request_id !== r.request_id)
         )
@@ -131,13 +137,17 @@ export default function Dashboard() {
         body: JSON.stringify({ request_id: r.request_id, action: action }),
       }).then((res) => {
         if (action === ACCEPT_REQUEST) {
-          setFriends((prev) => [
-            ...prev,
-            { id: r.from_user_id, username: r.from_username },
-          ]);
-          setRequests((prev) =>
-            prev.filter((req) => req.request_id !== r.request_id)
-          );
+          if (
+            friends.map((other_user) => other_user.id).includes(r.from_user_id)
+          ) {
+            setFriends([
+              ...friends,
+              { id: r.from_user_id, username: r.from_username },
+            ]);
+            setRequests((prev) =>
+              prev.filter((req) => req.request_id !== r.request_id)
+            );
+          }
         } else {
           //REJECT_REQUEST
           setRequests((prev) =>
@@ -146,54 +156,109 @@ export default function Dashboard() {
         }
       });
     },
-    [setFriends, setRequests, apiFetch]
+    [friends, setFriends, setRequests, apiFetch]
   );
 
   const handleRespondedSentRequestEvent = useCallback(
     (payload, action) => {
       // action: 'accept', 'reject'
-      const { request_id } = payload;
-      if (action === ACCEPT_REQUEST) {
-        const tmp = sentRequests.filter((req) => req.request_id === request_id);
-        if (tmp.length === 0) return;
-        setSentRequests((prev) =>
+      const { request_id, responder_id } = payload;
+
+      if (responder_id !== user.id) {
+        if (action === ACCEPT_REQUEST) {
+          const tmp = sentRequests.filter(
+            (req) => req.request_id === request_id
+          );
+          if (tmp.length === 0) return;
+          setSentRequests((prev) =>
+            prev.filter((req) => req.request_id !== request_id)
+          );
+          const req = tmp[0];
+          setFriends((prev) => [
+            ...prev,
+            { id: req.to_user_id, username: req.to_username },
+          ]);
+        } else {
+          // 'reject'
+          setSentRequests((prev) =>
+            prev.filter((req) => req.request_id !== request_id)
+          );
+        }
+      } else {
+        if (requests.map((r) => r.request_id).includes(request_id)) {
+          if (action === ACCEPT_REQUEST) {
+            const tmp = requests.filter((req) => req.request_id === request_id);
+            if (tmp.length === 0) return;
+            setRequests((prev) =>
+              prev.filter((req) => req.request_id !== request_id)
+            );
+            const req = tmp[0];
+            setFriends([
+              ...friends,
+              { id: req.from_user_id, username: req.from_username },
+            ]);
+          } else {
+            // 'reject'
+            setRequests((prev) =>
+              prev.filter((req) => req.request_id !== request_id)
+            );
+          }
+        }
+      }
+    },
+    [user, requests, sentRequests, setFriends, setSentRequests]
+  );
+
+  const handleCanceledRequestEvent = useCallback(
+    (payload) => {
+      const { request_id, canceler_id } = payload;
+      if (canceler_id !== user.id) {
+        setRequests((prev) =>
           prev.filter((req) => req.request_id !== request_id)
         );
-        const req = tmp[0];
-        setFriends((prev) => [
-          ...prev,
-          { id: req.to_user_id, username: req.to_username },
-        ]);
       } else {
-        // 'reject'
+        //no need to check because it's a filter
         setSentRequests((prev) =>
           prev.filter((req) => req.request_id !== request_id)
         );
       }
     },
-    [sentRequests, setFriends, setSentRequests]
-  );
-
-  const handleCanceledRequestEvent = useCallback(
-    (payload) => {
-      const { request_id } = payload;
-      setRequests((prev) =>
-        prev.filter((req) => req.request_id !== request_id)
-      );
-    },
-    [setRequests]
+    [user, setRequests, setSentRequests]
   );
 
   const handleReceivedRequestEvent = useCallback(
     (payload) => {
-      const { request_id, from_user_id, from_username } = payload;
-      if (requests.map((e) => e.request_id).includes(request_id)) return;
-      setRequests((prev) => [
-        ...prev,
-        { request_id, from_user_id, from_username },
-      ]);
+      const {
+        request_id,
+        from_user_id,
+        from_username,
+        to_user_id,
+        to_username,
+      } = payload;
+      console.log("handleReceivedRequestEvent", payload);
+      if (user.id !== from_user_id) {
+        if (requests.map((e) => e.request_id).includes(request_id)) return;
+        setRequests((prev) => [
+          ...prev,
+          { request_id, from_user_id, from_username },
+        ]);
+      } else {
+        console.log(
+          "handleReceivedRequestEvent user.id == from_user_id, sentRequests: ",
+          sentRequests
+        );
+        if (sentRequests.map((e) => e.request_id).includes(request_id)) return;
+        setSentRequests([
+          ...sentRequests,
+          {
+            request_id: request_id,
+            to_user_id: to_user_id,
+            to_username: to_username,
+          },
+        ]);
+      }
     },
-    [requests]
+    [user, requests, setRequests, sentRequests]
   );
 
   const handleLogout = async () => {
@@ -242,8 +307,8 @@ export default function Dashboard() {
           friends={friends}
           selectedFriends={selectedFriends}
           openFriendChat={openFriendChat}
-          socket={socket}
           closeFriendChat={closeFriendChat}
+          socket={socket}
         />
       </div>
     )
