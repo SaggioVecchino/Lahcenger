@@ -87,19 +87,22 @@
 
 .send-message-button > div {
   display: flex;
-  justify-content: center;
-  align-items: center;
+  width: 0;
 }
 
 .send-message-button a {
+  box-sizing: border-box;
   text-decoration: none;
   color: white;
-  font-size: 2.5em;
-  margin-bottom: 20px;
+  font-size: 2.6em;
+  position: relative;
+  bottom: 15px;
+  right: 60px;
 }
 
 .chat-input-container {
   height: fit-content;
+  margin-top: 5px;
 }
 
 .chat-input-container form {
@@ -109,4 +112,5 @@
 
 .chat-input {
   width: 100%;
+  padding-right: 65px;
 }
