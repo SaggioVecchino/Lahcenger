@@ -160,7 +160,9 @@ export default function FriendSearch({
                 ) : (
                   <>
                     {results.map((other_user) => (
-                      <div key={other_user.id}>{helperRender(other_user)}</div>
+                      <div key={other_user.id} style={{ padding: 2 }}>
+                        {helperRender(other_user)}
+                      </div>
                     ))}
                   </>
                 )}
