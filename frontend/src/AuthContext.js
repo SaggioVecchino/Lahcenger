@@ -1,5 +1,5 @@
 import { createContext, useContext, useState, useEffect } from "react";
-
+import { BACKEND_URI } from "./services/constants";
 const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
@@ -31,7 +31,7 @@ export const AuthProvider = ({ children }) => {
   }, []);
 
   const login = async (username, password) => {
-    const res = await fetch("http://localhost:5000/login", {
+    const res = await fetch(`${BACKEND_URI}/login`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ username, password }),
@@ -52,7 +52,7 @@ export const AuthProvider = ({ children }) => {
   const logout = async () => {
     //The important is important here
     deleteSessionInfos();
-    await apiFetch("http://localhost:5000/logout", { method: "POST" });
+    await apiFetch(`${BACKEND_URI}/logout`, { method: "POST" });
   };
 
   const apiFetch = async (url, opts = {}) => {

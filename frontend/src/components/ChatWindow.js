@@ -1,5 +1,6 @@
 import { useEffect, useState, useRef } from "react";
 import { useAuth } from "../AuthContext";
+import { BACKEND_URI } from "../services/constants";
 import "../styles/chat.css";
 
 export default function ChatWindow({ socket, friend_recipient, closeChat }) {
@@ -31,7 +32,7 @@ export default function ChatWindow({ socket, friend_recipient, closeChat }) {
 
   const loadMessages = async () => {
     const msgs = await apiFetch(
-      "http://localhost:5000/messages/history/" + friend_recipient.id
+      `${BACKEND_URI}/messages/history/${friend_recipient.id}`
     );
     setMessages(msgs);
     setLoadedMessages(true);

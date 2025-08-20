@@ -2,7 +2,11 @@ import { useEffect, useState, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import io from "socket.io-client";
 import { useAuth } from "../AuthContext";
-import { ACCEPT_REQUEST, REJECT_REQUEST } from "../services/constants";
+import {
+  ACCEPT_REQUEST,
+  BACKEND_URI,
+  REJECT_REQUEST,
+} from "../services/constants";
 import FriendSearch from "../components/FriendSearch";
 import Requests from "../components/Requests";
 import Chats from "../components/Chats";
@@ -19,7 +23,7 @@ export default function Dashboard() {
 
   useEffect(() => {
     if (user != null) {
-      const s = io("http://localhost:5000", { query: { token } });
+      const s = io(`${BACKEND_URI}`, { query: { token } });
       s.on("connected", () => {});
       setSocket(s);
       return () => s.disconnect();
@@ -59,11 +63,11 @@ export default function Dashboard() {
 
   useEffect(() => {
     if (user !== null) {
-      apiFetch("http://localhost:5000/friends/list")
+      apiFetch(`${BACKEND_URI}/friends/list`)
         .then((res) => (res ? res : []))
         .then(setFriends);
 
-      apiFetch("http://localhost:5000/friends/incoming_requests")
+      apiFetch(`${BACKEND_URI}/friends/incoming_requests`)
         .then((res) => (res ? res : []))
         .then((res) =>
           res.map((e) => ({
@@ -74,7 +78,7 @@ export default function Dashboard() {
         )
         .then(setRequests);
 
-      apiFetch("http://localhost:5000/friends/sent_requests")
+      apiFetch(`${BACKEND_URI}/friends/sent_requests`)
         .then((res) => (res ? res : []))
         .then((res) =>
           res.map((e) => ({
@@ -89,7 +93,7 @@ export default function Dashboard() {
 
   const addFriend = useCallback(
     (other_user) => {
-      apiFetch("http://localhost:5000/friends/send_request", {
+      apiFetch(`${BACKEND_URI}/friends/send_request`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ to_user_id: other_user.id }),
@@ -113,7 +117,7 @@ export default function Dashboard() {
 
   const cancelRequest = useCallback(
     (r) => {
-      apiFetch("http://localhost:5000/friends/cancel_request", {
+      apiFetch(`${BACKEND_URI}/friends/cancel_request`, {
         method: "POST",
         body: JSON.stringify({ request_id: r.request_id }),
       }).then(
@@ -132,7 +136,7 @@ export default function Dashboard() {
         return;
       }
 
-      apiFetch("http://localhost:5000/friends/respond", {
+      apiFetch(`${BACKEND_URI}/friends/respond`, {
         method: "POST",
         body: JSON.stringify({ request_id: r.request_id, action: action }),
       }).then((res) => {
