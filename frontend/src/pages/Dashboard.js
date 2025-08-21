@@ -62,33 +62,45 @@ export default function Dashboard() {
   };
 
   useEffect(() => {
+    let ignore = false;
     if (user !== null) {
-      apiFetch(`${BACKEND_URI}/friends/list`)
-        .then((res) => (res ? res : []))
-        .then(setFriends);
+      if (!ignore) {
+        apiFetch(`${BACKEND_URI}/friends/list`)
+          .then((res) => (res ? res : []))
+          .then((res) => {
+            if (!ignore) setFriends(res);
+          });
 
-      apiFetch(`${BACKEND_URI}/friends/incoming_requests`)
-        .then((res) => (res ? res : []))
-        .then((res) =>
-          res.map((e) => ({
-            request_id: e.request_id,
-            from_user_id: e.from_user_id,
-            from_username: e.from_username,
-          }))
-        )
-        .then(setRequests);
+        apiFetch(`${BACKEND_URI}/friends/incoming_requests`)
+          .then((res) => (res ? res : []))
+          .then((res) =>
+            res.map((e) => ({
+              request_id: e.request_id,
+              from_user_id: e.from_user_id,
+              from_username: e.from_username,
+            }))
+          )
+          .then((res) => {
+            if (!ignore) setRequests(res);
+          });
 
-      apiFetch(`${BACKEND_URI}/friends/sent_requests`)
-        .then((res) => (res ? res : []))
-        .then((res) =>
-          res.map((e) => ({
-            request_id: e.request_id,
-            to_user_id: e.to_user_id,
-            to_username: e.to_username,
-          }))
-        )
-        .then(setSentRequests);
+        apiFetch(`${BACKEND_URI}/friends/sent_requests`)
+          .then((res) => (res ? res : []))
+          .then((res) =>
+            res.map((e) => ({
+              request_id: e.request_id,
+              to_user_id: e.to_user_id,
+              to_username: e.to_username,
+            }))
+          )
+          .then((res) => {
+            if (!ignore) setSentRequests(res);
+          });
+      }
     }
+    return () => {
+      ignore = true;
+    };
   }, []);
 
   const addFriend = useCallback(
@@ -210,7 +222,7 @@ export default function Dashboard() {
         }
       }
     },
-    [user, requests, sentRequests, setFriends, setSentRequests]
+    [user, requests, sentRequests, friends, setFriends, setSentRequests]
   );
 
   const handleCanceledRequestEvent = useCallback(

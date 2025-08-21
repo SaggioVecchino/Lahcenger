@@ -22,20 +22,28 @@ export default function ChatWindow({ socket, friend_recipient, closeChat }) {
   };
 
   useEffect(() => {
-    loadMessages();
+    let ignore = false;
+    const loadMessages = async () => {
+      return await apiFetch(
+        `${BACKEND_URI}/messages/history/${friend_recipient.id}`
+      );
+    };
+    if (!ignore) {
+      loadMessages().then((msgs) => {
+        if (!ignore) {
+          setMessages(msgs);
+          setLoadedMessages(true);
+        }
+      });
+    }
+    return () => {
+      ignore = true;
+    };
   }, []);
 
   const submitMessage = (e) => {
     e.preventDefault();
     sendMessage();
-  };
-
-  const loadMessages = async () => {
-    const msgs = await apiFetch(
-      `${BACKEND_URI}/messages/history/${friend_recipient.id}`
-    );
-    setMessages(msgs);
-    setLoadedMessages(true);
   };
 
   useEffect(() => {
