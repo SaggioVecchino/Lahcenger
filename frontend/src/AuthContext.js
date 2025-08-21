@@ -50,9 +50,8 @@ export const AuthProvider = ({ children }) => {
   };
 
   const logout = async () => {
-    //The important is important here
-    deleteSessionInfos();
     await apiFetch(`${BACKEND_URI}/logout`, { method: "POST" });
+    deleteSessionInfos();
   };
 
   const apiFetch = async (url, opts = {}) => {
