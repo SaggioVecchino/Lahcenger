@@ -45,12 +45,12 @@ function App() {
 
 function ProtectedRoute({ children }) {
   const { user } = useAuth();
-  return user?.id ? children : <Navigate to="/login" />;
+  return user != null ? children : <Navigate to="/login" />;
 }
 
 function UnProtectedRoute({ children }) {
   const { user } = useAuth();
-  return user?.id ? <Navigate to="/" /> : children;
+  return user == null ? children : <Navigate to="/" />;
 }
 
 export default App;

@@ -63,7 +63,7 @@ export default function Dashboard() {
 
   useEffect(() => {
     let ignore = false;
-    if (user !== null) {
+    if (user != null) {
       if (!ignore) {
         apiFetch(`${BACKEND_URI}/friends/list`)
           .then((res) => (res ? res : []))

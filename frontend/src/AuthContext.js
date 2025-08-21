@@ -13,7 +13,7 @@ export const AuthProvider = ({ children }) => {
   };
 
   const setSessionInfos = ({ token, id, username }) => {
-    if (token === null || token === "") return;
+    if (token == null || token === "") return;
     localStorage.setItem("user_infos", JSON.stringify({ token, id, username }));
     setToken(token);
     setUser({ id, username });
@@ -55,7 +55,7 @@ export const AuthProvider = ({ children }) => {
   };
 
   const apiFetch = async (url, opts = {}) => {
-    if (token === null || token === "") return;
+    if (token == null || token === "") return;
     try {
       let res = await fetch(url, {
         ...opts,
