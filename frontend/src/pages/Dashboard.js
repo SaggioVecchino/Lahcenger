@@ -13,13 +13,21 @@ import Chats from "../components/Chats";
 import "../styles/dashboard.css";
 
 export default function Dashboard() {
-  const navigate = useNavigate();
   const { token, user, logout, apiFetch } = useAuth();
   const [friends, setFriends] = useState([]);
   const [requests, setRequests] = useState([]);
   const [sentRequests, setSentRequests] = useState([]);
   const [selectedFriends, setSelectedFriends] = useState([]);
   const [socket, setSocket] = useState(null);
+  const [isLoagingOut, setIsLoagingOut] = useState(false);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (user == null && isLoagingOut) {
+      navigate("/signup");
+      setIsLoagingOut(false);
+    }
+  }, [user, isLoagingOut]);
 
   useEffect(() => {
     if (user != null) {
@@ -154,7 +162,7 @@ export default function Dashboard() {
       }).then((res) => {
         if (action === ACCEPT_REQUEST) {
           if (
-            friends.map((other_user) => other_user.id).includes(r.from_user_id)
+            !friends.map((other_user) => other_user.id).includes(r.from_user_id)
           ) {
             setFriends([
               ...friends,
@@ -278,8 +286,8 @@ export default function Dashboard() {
   );
 
   const handleLogout = async () => {
+    setIsLoagingOut(true);
     await logout();
-    navigate("/signup");
   };
 
   return (

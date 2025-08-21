@@ -5,6 +5,15 @@ const AuthContext = createContext();
 export const AuthProvider = ({ children }) => {
   const [token, setToken] = useState("");
   const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    setLoading(true);
+    const { token, id, username } = getSessionInfos();
+    setUser({ id, username });
+    setToken(token);
+    setLoading(false);
+  }, []);
 
   const deleteSessionInfos = () => {
     localStorage.removeItem("user_infos");
@@ -13,22 +22,18 @@ export const AuthProvider = ({ children }) => {
   };
 
   const setSessionInfos = ({ token, id, username }) => {
+    setLoading(true);
     if (token == null || token === "") return;
     localStorage.setItem("user_infos", JSON.stringify({ token, id, username }));
     setToken(token);
     setUser({ id, username });
+    setLoading(false);
   };
 
   const getSessionInfos = () => {
     const data = JSON.parse(localStorage.getItem("user_infos"));
     return { token: data?.token, id: data?.id, username: data?.username };
   };
-
-  useEffect(() => {
-    const { token, id, username } = getSessionInfos();
-    setUser({ id, username });
-    setToken(token);
-  }, []);
 
   const login = async (username, password) => {
     const res = await fetch(`${BACKEND_URI}/login`, {
@@ -50,8 +55,10 @@ export const AuthProvider = ({ children }) => {
   };
 
   const logout = async () => {
+    setLoading(true);
     await apiFetch(`${BACKEND_URI}/logout`, { method: "POST" });
     deleteSessionInfos();
+    setLoading(false);
   };
 
   const apiFetch = async (url, opts = {}) => {
@@ -76,7 +83,9 @@ export const AuthProvider = ({ children }) => {
   };
 
   return (
-    <AuthContext.Provider value={{ token, user, login, logout, apiFetch }}>
+    <AuthContext.Provider
+      value={{ token, user, login, logout, apiFetch, loading }}
+    >
       {children}
     </AuthContext.Provider>
   );
