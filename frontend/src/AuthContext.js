@@ -1,5 +1,6 @@
 import { createContext, useContext, useState, useEffect } from "react";
 import { BACKEND_URI } from "./services/constants";
+import { sleep } from "./services/utils";
 const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
@@ -88,6 +89,7 @@ export const AuthProvider = ({ children }) => {
     if (token == null || token === "") return;
     if (url === `${BACKEND_URI}/logout` && !loggingOut) return;
     if (url !== `${BACKEND_URI}/logout` && loggingOut) return;
+    await sleep(100); // Not the sexiest solution
     try {
       let res = await fetch(url, {
         ...opts,
