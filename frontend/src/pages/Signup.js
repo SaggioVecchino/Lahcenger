@@ -2,10 +2,17 @@ import { useNavigate } from "react-router-dom";
 import { useAuth } from "../AuthContext";
 import LoginSignupForm from "../components/LoginSignupForm";
 import { BACKEND_URI } from "../services/constants";
+import { useEffect } from "react";
 
 export default function Signup() {
   const navigate = useNavigate();
-  const { login } = useAuth();
+  const { login, user } = useAuth();
+
+  useEffect(() => {
+    if (user?.id) {
+      navigate("/");
+    }
+  });
 
   const handleSubmit = async (username, password) => {
     const res = await fetch(`${BACKEND_URI}/signup`, {

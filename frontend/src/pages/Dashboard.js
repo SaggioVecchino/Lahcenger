@@ -13,21 +13,25 @@ import Chats from "../components/Chats";
 import "../styles/dashboard.css";
 
 export default function Dashboard() {
-  const { token, user, logout, apiFetch } = useAuth();
+  const { token, user, logout, apiFetch, loggingOut, loading } = useAuth();
   const [friends, setFriends] = useState([]);
   const [requests, setRequests] = useState([]);
   const [sentRequests, setSentRequests] = useState([]);
   const [selectedFriends, setSelectedFriends] = useState([]);
   const [socket, setSocket] = useState(null);
-  const [isLoagingOut, setIsLoagingOut] = useState(false);
+  const [internLoggingOut, setInternLogout] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (user == null && isLoagingOut) {
+    if (!user?.id) {
+      setInternLogout(true);
       navigate("/signup");
-      setIsLoagingOut(false);
+      setInternLogout(false);
+      return () => {
+        setInternLogout(false);
+      };
     }
-  }, [user, isLoagingOut]);
+  }, [user]);
 
   useEffect(() => {
     if (user != null) {
@@ -39,7 +43,7 @@ export default function Dashboard() {
   }, [user, token]);
 
   useEffect(() => {
-    if (socket != null && user != null) {
+    if (user != null && socket != null && socket !== "") {
       const handler = ({ sender_id, recipient_id, sender_username }) => {
         if (sender_id === user.id || recipient_id !== user.id) return;
         if (
@@ -71,7 +75,7 @@ export default function Dashboard() {
 
   useEffect(() => {
     let ignore = false;
-    if (user != null) {
+    if (user != null && !loading && !loggingOut && !internLoggingOut) {
       if (!ignore) {
         apiFetch(`${BACKEND_URI}/friends/list`)
           .then((res) => (res ? res : []))
@@ -109,7 +113,7 @@ export default function Dashboard() {
     return () => {
       ignore = true;
     };
-  }, []);
+  }, [user]);
 
   const addFriend = useCallback(
     (other_user) => {
@@ -286,8 +290,8 @@ export default function Dashboard() {
   );
 
   const handleLogout = async () => {
-    setIsLoagingOut(true);
-    await logout();
+    setInternLogout(true);
+    logout();
   };
 
   return (

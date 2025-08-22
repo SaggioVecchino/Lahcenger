@@ -6,6 +6,22 @@ export const AuthProvider = ({ children }) => {
   const [token, setToken] = useState("");
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [loggingOut, setLoggingOut] = useState(false);
+
+  useEffect(() => {
+    if (loggingOut) {
+      handleLogout();
+    }
+  }, [loggingOut]);
+
+  useEffect(() => {
+    if (user == null) {
+      if (!loggingOut) {
+        setLoggingOut(true);
+        setLoading(true);
+      }
+    }
+  }, [user]);
 
   useEffect(() => {
     setLoading(true);
@@ -54,15 +70,24 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  const logout = async () => {
+  const logout = () => {
+    setLoggingOut(true);
     setLoading(true);
-    await apiFetch(`${BACKEND_URI}/logout`, { method: "POST" });
-    deleteSessionInfos();
-    setLoading(false);
+    // useEffect will call handleLogout
+  };
+
+  const handleLogout = async () => {
+    apiFetch(`${BACKEND_URI}/logout`, { method: "POST" }).then(() => {
+      deleteSessionInfos();
+      setLoading(false);
+      setLoggingOut(false);
+    });
   };
 
   const apiFetch = async (url, opts = {}) => {
     if (token == null || token === "") return;
+    if (url === `${BACKEND_URI}/logout` && !loggingOut) return;
+    if (url !== `${BACKEND_URI}/logout` && loggingOut) return;
     try {
       let res = await fetch(url, {
         ...opts,
@@ -84,7 +109,7 @@ export const AuthProvider = ({ children }) => {
 
   return (
     <AuthContext.Provider
-      value={{ token, user, login, logout, apiFetch, loading }}
+      value={{ token, user, login, logout, apiFetch, loading, loggingOut }}
     >
       {children}
     </AuthContext.Provider>
