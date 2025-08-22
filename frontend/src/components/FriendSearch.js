@@ -13,13 +13,12 @@ export default function FriendSearch({
   cancelRequest,
   acceptRequest,
   rejectRequest,
-  socket,
   onAcceptedSentRequest,
   onRejectedSentRequest,
   onCanceledRequest,
   onReceivedRequest,
 }) {
-  const { apiFetch } = useAuth();
+  const { apiFetch, socket } = useAuth();
   const [query, setQuery] = useState("");
   const [loading, setLoading] = useState(false);
   const [resultsCleared, setResultsCleared] = useState(true);
