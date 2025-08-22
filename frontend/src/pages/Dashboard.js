@@ -13,23 +13,17 @@ import Chats from "../components/Chats";
 import "../styles/dashboard.css";
 
 export default function Dashboard() {
-  const { token, user, logout, apiFetch, loggingOut, loading } = useAuth();
+  const { token, user, logout, apiFetch } = useAuth();
   const [friends, setFriends] = useState([]);
   const [requests, setRequests] = useState([]);
   const [sentRequests, setSentRequests] = useState([]);
   const [selectedFriends, setSelectedFriends] = useState([]);
   const [socket, setSocket] = useState(null);
-  const [internLoggingOut, setInternLogout] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (!user?.id) {
-      setInternLogout(true);
-      navigate("/signup");
-      setInternLogout(false);
-      return () => {
-        setInternLogout(false);
-      };
+    if (user == null) {
+      navigate("/login");
     }
   }, [user]);
 
@@ -75,7 +69,7 @@ export default function Dashboard() {
 
   useEffect(() => {
     let ignore = false;
-    if (user != null && !loading && !loggingOut && !internLoggingOut) {
+    if (user != null) {
       if (!ignore) {
         apiFetch(`${BACKEND_URI}/friends/list`)
           .then((res) => (res ? res : []))
@@ -263,7 +257,6 @@ export default function Dashboard() {
         to_user_id,
         to_username,
       } = payload;
-      console.log("handleReceivedRequestEvent", payload);
       if (user.id !== from_user_id) {
         if (requests.map((e) => e.request_id).includes(request_id)) return;
         setRequests((prev) => [
@@ -271,11 +264,8 @@ export default function Dashboard() {
           { request_id, from_user_id, from_username },
         ]);
       } else {
-        console.log(
-          "handleReceivedRequestEvent user.id == from_user_id, sentRequests: ",
-          sentRequests
-        );
         if (sentRequests.map((e) => e.request_id).includes(request_id)) return;
+
         setSentRequests([
           ...sentRequests,
           {
@@ -290,7 +280,7 @@ export default function Dashboard() {
   );
 
   const handleLogout = async () => {
-    setInternLogout(true);
+    // setInternLogout(true);
     logout();
   };
 
@@ -338,6 +328,9 @@ export default function Dashboard() {
           closeFriendChat={closeFriendChat}
           socket={socket}
         />
+        <h1>
+          <a href="/test">Go to test page</a>
+        </h1>
       </div>
     )
   );

@@ -9,7 +9,7 @@ export default function Signup() {
   const { login, user } = useAuth();
 
   useEffect(() => {
-    if (user?.id) {
+    if (user != null) {
       navigate("/");
     }
   });

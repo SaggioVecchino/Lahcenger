@@ -8,7 +8,7 @@ export default function Login() {
   const { login, user } = useAuth();
 
   useEffect(() => {
-    if (user?.id) {
+    if (user != null) {
       navigate("/");
     }
   });

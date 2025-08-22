@@ -3,8 +3,8 @@ import { useAuth } from "../AuthContext";
 import { BACKEND_URI } from "../services/constants";
 import "../styles/chat.css";
 
-export default function ChatWindow({ friend_recipient, closeChat }) {
-  const { apiFetch, socket } = useAuth();
+export default function ChatWindow({ friend_recipient, closeChat, socket }) {
+  const { apiFetch } = useAuth();
   const [msgContent, setMsgContent] = useState("");
   const [messages, setMessages] = useState([]);
   const [loadedMessages, setLoadedMessages] = useState(false);

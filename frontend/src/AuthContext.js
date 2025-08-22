@@ -1,55 +1,37 @@
 import { createContext, useContext, useState, useEffect } from "react";
-import { BACKEND_URI } from "./services/constants";
-import { sleep } from "./services/utils";
+import { BACKEND_URI, LOCAL_STORAGE_NAME } from "./services/constants";
+import {
+  // sleep,
+  extractTokenFromSession,
+  extractUserFromSession,
+} from "./services/utils";
+
 const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
-  const [token, setToken] = useState("");
-  const [user, setUser] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [loggingOut, setLoggingOut] = useState(false);
-
-  useEffect(() => {
-    if (loggingOut) {
-      handleLogout();
-    }
-  }, [loggingOut]);
+  const [token, setToken] = useState(extractTokenFromSession());
+  const [user, setUser] = useState(extractUserFromSession());
 
   useEffect(() => {
     if (user == null) {
-      if (!loggingOut) {
-        setLoggingOut(true);
-        setLoading(true);
-      }
+      logout();
     }
   }, [user]);
 
-  useEffect(() => {
-    setLoading(true);
-    const { token, id, username } = getSessionInfos();
-    setUser({ id, username });
-    setToken(token);
-    setLoading(false);
-  }, []);
-
   const deleteSessionInfos = () => {
-    localStorage.removeItem("user_infos");
+    localStorage.removeItem(LOCAL_STORAGE_NAME);
     setUser(null);
     setToken("");
   };
 
   const setSessionInfos = ({ token, id, username }) => {
-    setLoading(true);
     if (token == null || token === "") return;
-    localStorage.setItem("user_infos", JSON.stringify({ token, id, username }));
+    localStorage.setItem(
+      LOCAL_STORAGE_NAME,
+      JSON.stringify({ token, id, username })
+    );
     setToken(token);
     setUser({ id, username });
-    setLoading(false);
-  };
-
-  const getSessionInfos = () => {
-    const data = JSON.parse(localStorage.getItem("user_infos"));
-    return { token: data?.token, id: data?.id, username: data?.username };
   };
 
   const login = async (username, password) => {
@@ -72,24 +54,23 @@ export const AuthProvider = ({ children }) => {
   };
 
   const logout = () => {
-    setLoggingOut(true);
-    setLoading(true);
-    // useEffect will call handleLogout
+    handleLogout();
   };
 
   const handleLogout = async () => {
-    apiFetch(`${BACKEND_URI}/logout`, { method: "POST" }).then(() => {
-      deleteSessionInfos();
-      setLoading(false);
-      setLoggingOut(false);
-    });
+    if (user != null) {
+      apiFetch(`${BACKEND_URI}/logout`, { method: "POST" }).then(() => {
+        deleteSessionInfos();
+      });
+    }
+    // deleteSessionInfos();
   };
 
   const apiFetch = async (url, opts = {}) => {
     if (token == null || token === "") return;
-    if (url === `${BACKEND_URI}/logout` && !loggingOut) return;
-    if (url !== `${BACKEND_URI}/logout` && loggingOut) return;
-    await sleep(100); // Not the sexiest solution
+    if (url === `${BACKEND_URI}/logout` && user != null) return;
+    if (url !== `${BACKEND_URI}/logout` && user == null) return;
+    // await sleep(100); // Not the sexiest solution
     try {
       let res = await fetch(url, {
         ...opts,
@@ -110,9 +91,7 @@ export const AuthProvider = ({ children }) => {
   };
 
   return (
-    <AuthContext.Provider
-      value={{ token, user, login, logout, apiFetch, loading, loggingOut }}
-    >
+    <AuthContext.Provider value={{ token, user, login, logout, apiFetch }}>
       {children}
     </AuthContext.Provider>
   );

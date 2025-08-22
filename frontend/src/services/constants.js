@@ -1,3 +1,4 @@
+export const LOCAL_STORAGE_NAME = "user_infos";
 export const ACCEPT_REQUEST = "accept";
 export const REJECT_REQUEST = "reject";
 export const BACKEND_IS_HTTPS = false;
