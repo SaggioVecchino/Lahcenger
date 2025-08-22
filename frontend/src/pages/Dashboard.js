@@ -4,6 +4,12 @@ import io from "socket.io-client";
 import { useAuth } from "../AuthContext";
 import {
   ACCEPT_REQUEST,
+  API_FRIENDS_CANCEL_REQUEST,
+  API_FRIENDS_LIST,
+  API_FRIENDS_RESPOND,
+  API_FRIENDS_SEND_REQUEST,
+  API_FRIENDS_SENT_REQUESTS,
+  API_FRIENDS_INCOMING_REQUESTS,
   BACKEND_URI,
   REJECT_REQUEST,
 } from "../services/constants";
@@ -23,7 +29,7 @@ export default function Dashboard() {
 
   useEffect(() => {
     if (user == null) {
-      navigate("/login");
+      navigate("/redirector");
     }
   }, [user]);
 
@@ -71,13 +77,13 @@ export default function Dashboard() {
     let ignore = false;
     if (user != null) {
       if (!ignore) {
-        apiFetch(`${BACKEND_URI}/friends/list`)
+        apiFetch(`${API_FRIENDS_LIST}`)
           .then((res) => (res ? res : []))
           .then((res) => {
             if (!ignore) setFriends(res);
           });
 
-        apiFetch(`${BACKEND_URI}/friends/incoming_requests`)
+        apiFetch(`${API_FRIENDS_INCOMING_REQUESTS}`)
           .then((res) => (res ? res : []))
           .then((res) =>
             res.map((e) => ({
@@ -90,7 +96,7 @@ export default function Dashboard() {
             if (!ignore) setRequests(res);
           });
 
-        apiFetch(`${BACKEND_URI}/friends/sent_requests`)
+        apiFetch(`${API_FRIENDS_SENT_REQUESTS}`)
           .then((res) => (res ? res : []))
           .then((res) =>
             res.map((e) => ({
@@ -111,7 +117,7 @@ export default function Dashboard() {
 
   const addFriend = useCallback(
     (other_user) => {
-      apiFetch(`${BACKEND_URI}/friends/send_request`, {
+      apiFetch(`${API_FRIENDS_SEND_REQUEST}`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ to_user_id: other_user.id }),
@@ -135,7 +141,7 @@ export default function Dashboard() {
 
   const cancelRequest = useCallback(
     (r) => {
-      apiFetch(`${BACKEND_URI}/friends/cancel_request`, {
+      apiFetch(`${API_FRIENDS_CANCEL_REQUEST}`, {
         method: "POST",
         body: JSON.stringify({ request_id: r.request_id }),
       }).then(
@@ -154,7 +160,7 @@ export default function Dashboard() {
         return;
       }
 
-      apiFetch(`${BACKEND_URI}/friends/respond`, {
+      apiFetch(`${API_FRIENDS_RESPOND}`, {
         method: "POST",
         body: JSON.stringify({ request_id: r.request_id, action: action }),
       }).then((res) => {
@@ -280,7 +286,6 @@ export default function Dashboard() {
   );
 
   const handleLogout = async () => {
-    // setInternLogout(true);
     logout();
   };
 

@@ -7,6 +7,7 @@ import {
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
 import Dashboard from "./pages/Dashboard";
+import Redirector from "./pages/Redirector";
 import { AuthProvider } from "./AuthContext";
 import TestPage from "./pages/TestPage";
 
@@ -20,6 +21,7 @@ function App() {
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/test" element={<TestPage />} />
           <Route path="/" element={<Dashboard />} />
+          <Route path="/redirector" element={<Redirector />} />
           <Route path="*" element={<Navigate to="/" />} />
         </Routes>
       </Router>

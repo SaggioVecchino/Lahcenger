@@ -1,5 +1,9 @@
 import { createContext, useContext, useState, useEffect } from "react";
-import { BACKEND_URI, LOCAL_STORAGE_NAME } from "./services/constants";
+import {
+  LOCAL_STORAGE_NAME,
+  API_LOGOUT,
+  API_LOGIN,
+} from "./services/constants";
 import {
   // sleep,
   extractTokenFromSession,
@@ -35,7 +39,7 @@ export const AuthProvider = ({ children }) => {
   };
 
   const login = async (username, password) => {
-    const res = await fetch(`${BACKEND_URI}/login`, {
+    const res = await fetch(`${API_LOGIN}`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ username, password }),
@@ -59,7 +63,7 @@ export const AuthProvider = ({ children }) => {
 
   const handleLogout = async () => {
     if (user != null) {
-      apiFetch(`${BACKEND_URI}/logout`, { method: "POST" }).then(() => {
+      apiFetch(`${API_LOGOUT}`, { method: "POST" }).then(() => {
         deleteSessionInfos();
       });
     }
@@ -68,8 +72,8 @@ export const AuthProvider = ({ children }) => {
 
   const apiFetch = async (url, opts = {}) => {
     if (token == null || token === "") return;
-    if (url === `${BACKEND_URI}/logout` && user != null) return;
-    if (url !== `${BACKEND_URI}/logout` && user == null) return;
+    if (url === `${API_LOGOUT}` && user != null) return;
+    if (url !== `${API_LOGOUT}/logout` && user == null) return;
     // await sleep(100); // Not the sexiest solution
     try {
       let res = await fetch(url, {

@@ -1,21 +1,14 @@
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../AuthContext";
 import LoginSignupForm from "../components/LoginSignupForm";
-import { BACKEND_URI } from "../services/constants";
-import { useEffect } from "react";
+import { API_SIGNUP } from "../services/constants";
 
 export default function Signup() {
   const navigate = useNavigate();
-  const { login, user } = useAuth();
-
-  useEffect(() => {
-    if (user != null) {
-      navigate("/");
-    }
-  });
+  const { login } = useAuth();
 
   const handleSubmit = async (username, password) => {
-    const res = await fetch(`${BACKEND_URI}/signup`, {
+    const res = await fetch(`${API_SIGNUP}`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ username, password }),

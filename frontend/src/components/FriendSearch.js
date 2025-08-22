@@ -3,7 +3,7 @@ import { useAuth } from "../AuthContext";
 import { sleep } from "../services/utils";
 import { useClickOutside } from "../services/utils";
 import { ResultPersonSearch } from "./ResultPersonSearch";
-import { BACKEND_URI } from "../services/constants";
+import { API_USERS_SEARCH } from "../services/constants";
 
 export default function FriendSearch({
   alreadyRequested,
@@ -60,7 +60,7 @@ export default function FriendSearch({
     await sleep(500);
     try {
       const res = await apiFetch(
-        `${BACKEND_URI}/users/search?${new URLSearchParams({
+        `${API_USERS_SEARCH}${new URLSearchParams({
           q: query,
         }).toString()}`
       );

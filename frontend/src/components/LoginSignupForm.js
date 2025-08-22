@@ -1,9 +1,19 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import "../styles/login_signup.css";
+import { useNavigate } from "react-router-dom";
+import { useAuth } from "../AuthContext";
 
 export default function LoginSignupForm({ onSubmit, isLoginPage }) {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const { user } = useAuth();
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (user != null) {
+      navigate("/redirector");
+    }
+  });
 
   const handleSubmit = async (e) => {
     e.preventDefault();

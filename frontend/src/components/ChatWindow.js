@@ -1,6 +1,6 @@
 import { useEffect, useState, useRef } from "react";
 import { useAuth } from "../AuthContext";
-import { BACKEND_URI } from "../services/constants";
+import { API_MESSAGES_HISTORY } from "../services/constants";
 import "../styles/chat.css";
 
 export default function ChatWindow({ friend_recipient, closeChat, socket }) {
@@ -24,9 +24,7 @@ export default function ChatWindow({ friend_recipient, closeChat, socket }) {
   useEffect(() => {
     let ignore = false;
     const loadMessages = async () => {
-      return await apiFetch(
-        `${BACKEND_URI}/messages/history/${friend_recipient.id}`
-      );
+      return await apiFetch(`${API_MESSAGES_HISTORY}/${friend_recipient.id}`);
     };
     if (!ignore) {
       loadMessages().then((msgs) => {
