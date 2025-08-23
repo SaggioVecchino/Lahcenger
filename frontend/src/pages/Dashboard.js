@@ -19,12 +19,12 @@ import Chats from "../components/Chats";
 import "../styles/dashboard.css";
 
 export default function Dashboard() {
-  const { token, user, logout, apiFetch } = useAuth();
+  const { token, user, logout, apiFetch, socket, updateSocket } = useAuth();
   const [friends, setFriends] = useState([]);
   const [requests, setRequests] = useState([]);
   const [sentRequests, setSentRequests] = useState([]);
   const [selectedFriends, setSelectedFriends] = useState([]);
-  const [socket, setSocket] = useState(null);
+
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -37,7 +37,7 @@ export default function Dashboard() {
     if (user != null) {
       const s = io(`${BACKEND_URI}`, { query: { token } });
       s.on("connected", () => {});
-      setSocket(s);
+      updateSocket(s);
       return () => s.disconnect();
     }
   }, [user, token]);
@@ -301,7 +301,6 @@ export default function Dashboard() {
             acceptRequest={(r) => respondRequest(r, ACCEPT_REQUEST)}
             rejectRequest={(r) => respondRequest(r, REJECT_REQUEST)}
             cancelRequest={cancelRequest}
-            socket={socket}
             onAcceptedSentRequest={(payload) =>
               handleRespondedSentRequestEvent(payload, ACCEPT_REQUEST)
             }
@@ -331,7 +330,6 @@ export default function Dashboard() {
           selectedFriends={selectedFriends}
           openFriendChat={openFriendChat}
           closeFriendChat={closeFriendChat}
-          socket={socket}
         />
         <h1>
           <a href="/test">Go to test page</a>

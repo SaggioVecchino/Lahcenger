@@ -7,9 +7,8 @@ export default function Chats({
   selectedFriends,
   openFriendChat,
   closeFriendChat,
-  socket,
 }) {
-  const { user } = useAuth();
+  const { user, socket } = useAuth();
   useEffect(() => {
     if (socket != null && user != null) {
       const handler = (payload) => {
@@ -60,7 +59,6 @@ export default function Chats({
             selectedFriends.map((friend) => (
               <ChatWindow
                 key={friend.id}
-                socket={socket}
                 friend_recipient={friend}
                 closeChat={closeFriendChat}
               />

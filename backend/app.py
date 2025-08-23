@@ -74,6 +74,7 @@ class Message(db.Model):
     recipient_id = db.Column(db.String, db.ForeignKey("user.id"), nullable=False)
     content = db.Column(db.Text, nullable=True)
     image_path = db.Column(db.String(400), nullable=True)
+    status = db.Column(db.String(10), default="sent")  # sent, received, read
     created_at = db.Column(db.DateTime, default=datetime.datetime.utcnow)
 
 
@@ -467,6 +468,7 @@ def messages_history(other_user_id):
                     if m.image_path
                     else None
                 ),
+                "status": m.status,
                 "created_at": m.created_at.isoformat(),
             }
         )
@@ -623,6 +625,7 @@ def handle_send_message(data):
         "sender_username": sender.username,
         "content": content,
         "image_url": f"/uploads/{os.path.basename(image_path)}" if image_path else None,
+        "status": msg.status,
         "created_at": msg.created_at.isoformat(),
     }
 
@@ -631,6 +634,97 @@ def handle_send_message(data):
     room_sender = _user_room(sender.id)
     emit("new_message", payload_out, room=room_recipient, namespace="/")
     emit("new_message", payload_out, room=room_sender, namespace="/")
+
+
+@socketio.on("i_received_message", namespace="/")
+def handle_received_message(data):
+    """
+    Expected data:
+    {
+      "message_id": int
+    }
+    Must been sent of message receiver.
+    """
+    token = request.args.get("token", None)
+    if not token:
+        emit("error", {"message": "not authenticated"}, namespace="/")
+        return
+    try:
+        payload = decode_token(token)
+    except Exception:
+        emit("error", {"message": "invalid token"}, namespace="/")
+        return
+    jti = payload.get("jti")
+    if is_jti_revoked(jti):
+        emit("error", {"message": "token revoked"}, namespace="/")
+        return
+    user = User.query.get(payload.get("user_id"))
+    if not user:
+        emit("error", {"message": "user not found"}, namespace="/")
+        return
+    msg_id = data.get("content")
+    if not msg_id:
+        emit("error", {"message": "no message_id provided"}, namespace="/")
+        return
+
+    message = Message.get(msg_id)
+    if not message:
+        emit("error", {"message": "message not found"}, namespace="/")
+        return
+    if message.recipient_id != user.id or message.status != "sent":
+        emit("error", {"message": "unexpected notification"}, namespace="/")
+        return
+    message.status = "received"
+    db.session.add(message)
+    db.session.commit()
+
+    room_sender = _user_room(message.sender_id)
+    payload_out = {"message_id": msg_id}
+    emit("he_received_message", payload_out, room=room_sender, namespace="/")
+
+
+@socketio.on("i_read_message", namespace="/")
+def handle_read_message(data):
+    """
+    Expected data:
+    {
+      "message_id": int
+    }
+    Must been sent of message receiver.
+    """
+    token = request.args.get("token", None)
+    if not token:
+        emit("error", {"message": "not authenticated"}, namespace="/")
+        return
+    try:
+        payload = decode_token(token)
+    except Exception:
+        emit("error", {"message": "invalid token"}, namespace="/")
+        return
+    jti = payload.get("jti")
+    if is_jti_revoked(jti):
+        emit("error", {"message": "token revoked"}, namespace="/")
+        return
+    user = User.query.get(payload.get("user_id"))
+    if not user:
+        emit("error", {"message": "user not found"}, namespace="/")
+        return
+    msg_id = data.get("content")
+    if not msg_id:
+        emit("error", {"message": "no message_id provided"}, namespace="/")
+        return
+
+    message = Message.get(msg_id)
+    if not message:
+        emit("error", {"message": "message not found"}, namespace="/")
+        return
+    if message.recipient_id != user.id or message.status not in ["sent", "received"]:
+        emit("error", {"message": "unexpected notification"}, namespace="/")
+        return
+
+    room_sender = _user_room(message.sender_id)
+    payload_out = {"message_id": msg_id}
+    emit("he_read_message", payload_out, room=room_sender, namespace="/")
 
 
 # -----------------------

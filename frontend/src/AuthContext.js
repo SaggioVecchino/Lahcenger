@@ -15,12 +15,17 @@ const AuthContext = createContext();
 export const AuthProvider = ({ children }) => {
   const [token, setToken] = useState(extractTokenFromSession());
   const [user, setUser] = useState(extractUserFromSession());
+  const [socket, setSocket] = useState(null);
 
   useEffect(() => {
     if (user == null) {
       logout();
     }
   }, [user]);
+
+  const updateSocket = (s) => {
+    setSocket(s);
+  };
 
   const deleteSessionInfos = () => {
     localStorage.removeItem(LOCAL_STORAGE_NAME);
@@ -95,7 +100,9 @@ export const AuthProvider = ({ children }) => {
   };
 
   return (
-    <AuthContext.Provider value={{ token, user, login, logout, apiFetch }}>
+    <AuthContext.Provider
+      value={{ token, user, login, logout, apiFetch, updateSocket, socket }}
+    >
       {children}
     </AuthContext.Provider>
   );
