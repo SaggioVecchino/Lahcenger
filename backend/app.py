@@ -8,6 +8,7 @@ from flask import Flask, request, jsonify, g, send_from_directory, abort
 from flask_cors import CORS, cross_origin
 
 from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy import or_
 from flask_migrate import Migrate
 from flask_socketio import SocketIO, emit, join_room, leave_room
 import bcrypt
@@ -38,17 +39,21 @@ socketio = SocketIO(app, cors_allowed_origins="*")
 # -----------------------
 # Models
 # -----------------------
+def now_utc():
+    return datetime.datetime.now(datetime.timezone.utc)
+
+
 class User(db.Model):
     id = db.Column(db.String(36), primary_key=True, default=lambda: str(uuid.uuid4()))
     username = db.Column(db.String(20), unique=True, nullable=False)
     password_hash = db.Column(db.LargeBinary(60), nullable=False)
-    created_at = db.Column(db.DateTime, default=datetime.datetime.utcnow)
+    created_at = db.Column(db.DateTime, default=now_utc)
 
 
 class RevokedToken(db.Model):
     id = db.Column(db.String(36), primary_key=True, default=lambda: str(uuid.uuid4()))
     jti = db.Column(db.String(64), unique=True, nullable=False)
-    revoked_at = db.Column(db.DateTime, default=datetime.datetime.utcnow)
+    revoked_at = db.Column(db.DateTime, default=now_utc)
 
 
 class FriendRequest(db.Model):
@@ -58,14 +63,19 @@ class FriendRequest(db.Model):
     status = db.Column(
         db.String(10), default="pending"
     )  # pending, accepted, rejected, canceled
-    created_at = db.Column(db.DateTime, default=datetime.datetime.utcnow)
+    created_at = (db.Column(db.DateTime, default=now_utc),)
+    updated_at = db.Column(
+        db.DateTime,
+        default=now_utc,
+        onupdate=now_utc,
+    )
 
 
 class Friendship(db.Model):
     id = db.Column(db.String(36), primary_key=True, default=lambda: str(uuid.uuid4()))
     user_id = db.Column(db.String, db.ForeignKey("user.id"), nullable=False)
     friend_id = db.Column(db.String, db.ForeignKey("user.id"), nullable=False)
-    created_at = db.Column(db.DateTime, default=datetime.datetime.utcnow)
+    created_at = db.Column(db.DateTime, default=now_utc)
 
 
 class Message(db.Model):
@@ -75,7 +85,7 @@ class Message(db.Model):
     content = db.Column(db.Text, nullable=True)
     image_path = db.Column(db.String(400), nullable=True)
     status = db.Column(db.String(10), default="sent")  # sent, received, read
-    created_at = db.Column(db.DateTime, default=datetime.datetime.utcnow)
+    created_at = db.Column(db.DateTime, default=now_utc)
 
 
 # -----------------------
@@ -93,9 +103,9 @@ def generate_token(user_id: int) -> str:
     jti = uuid.uuid4().hex
     payload = {
         "user_id": user_id,
-        "exp": datetime.datetime.utcnow()
+        "exp": now_utc()
         + datetime.timedelta(seconds=app.config["JWT_EXP_DELTA_SECONDS"]),
-        "iat": datetime.datetime.utcnow(),
+        "iat": now_utc(),
         "jti": jti,
     }
     token = jwt.encode(
@@ -487,7 +497,7 @@ def uploaded_file(filename):
 # -----------------------
 # Keep mapping of user_id -> socket sid(s)
 # user_id -> set(room names), we'll use room = f"user_{user_id}"
-connected_rooms = {}
+# connected_rooms = {}
 
 
 def _user_room(user_id):
@@ -662,25 +672,35 @@ def handle_received_message(data):
     if not user:
         emit("error", {"message": "user not found"}, namespace="/")
         return
-    msg_id = data.get("content")
+    msg_id = data.get("message_id")
     if not msg_id:
         emit("error", {"message": "no message_id provided"}, namespace="/")
         return
-
-    message = Message.get(msg_id)
+    message = Message.query.get(msg_id)
     if not message:
         emit("error", {"message": "message not found"}, namespace="/")
         return
     if message.recipient_id != user.id or message.status != "sent":
         emit("error", {"message": "unexpected notification"}, namespace="/")
         return
-    message.status = "received"
-    db.session.add(message)
-    db.session.commit()
 
-    room_sender = _user_room(message.sender_id)
-    payload_out = {"message_id": msg_id}
-    emit("he_received_message", payload_out, room=room_sender, namespace="/")
+    # I have to update previous messages status too (not obligatory, but I want to keep it consistent)
+    messages_to_update = Message.query.filter(
+        Message.created_at <= message.created_at,
+        Message.sender_id == message.sender_id,
+        Message.recipient_id == message.recipient_id,
+        Message.status == "sent",
+    )
+
+    if messages_to_update:
+        messages_to_update.update(
+            {Message.status: "received"}, synchronize_session="auto"
+        )
+        db.session.commit()
+
+        room_sender = _user_room(message.sender_id)
+        payload_out = {"message_id": msg_id}
+        emit("he_received_message", payload_out, room=room_sender, namespace="/")
 
 
 @socketio.on("i_read_message", namespace="/")
@@ -709,12 +729,12 @@ def handle_read_message(data):
     if not user:
         emit("error", {"message": "user not found"}, namespace="/")
         return
-    msg_id = data.get("content")
+    msg_id = data.get("message_id")
     if not msg_id:
         emit("error", {"message": "no message_id provided"}, namespace="/")
         return
 
-    message = Message.get(msg_id)
+    message = Message.query.get(msg_id)
     if not message:
         emit("error", {"message": "message not found"}, namespace="/")
         return
@@ -722,9 +742,20 @@ def handle_read_message(data):
         emit("error", {"message": "unexpected notification"}, namespace="/")
         return
 
-    room_sender = _user_room(message.sender_id)
-    payload_out = {"message_id": msg_id}
-    emit("he_read_message", payload_out, room=room_sender, namespace="/")
+    # I have to update previous messages status too (not obligatory, but I want to keep it consistent)
+    messages_to_update = Message.query.filter(
+        Message.created_at <= message.created_at,
+        Message.sender_id == message.sender_id,
+        Message.recipient_id == message.recipient_id,
+        or_(Message.status == "received", Message.status == "sent"),
+    )
+
+    if messages_to_update:
+        messages_to_update.update({Message.status: "read"}, synchronize_session="auto")
+        db.session.commit()
+        room_sender = _user_room(message.sender_id)
+        payload_out = {"message_id": msg_id}
+        emit("he_read_message", payload_out, room=room_sender, namespace="/")
 
 
 # -----------------------
@@ -734,7 +765,6 @@ def handle_read_message(data):
 def init_db():
     """Initialize the database (create tables)."""
     db.create_all()
-    print("Database initialized.")
 
 
 # -----------------------

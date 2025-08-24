@@ -1,6 +1,7 @@
 .chat-window {
-  margin: 0 8px;
+  margin: 5px auto;
   margin-bottom: 4px;
+  max-width: 1400px;
 }
 
 .chat-window header {
@@ -17,7 +18,7 @@
 .me-sender,
 .me-receiver {
   min-width: 10px;
-  max-width: 450px;
+  max-width: 500px;
   margin: 2px 2px;
   padding: 8px;
   display: block;
@@ -25,6 +26,7 @@
   border-radius: 17px;
   white-space: pre-wrap;
   overflow-wrap: break-word;
+  height: 100%;
 }
 
 .me-sender {
@@ -38,6 +40,7 @@
 .me-sender-container,
 .me-receiver-container {
   display: flex;
+  align-items: end;
 }
 
 .me-sender-container {
@@ -114,4 +117,43 @@
 .chat-input {
   width: 100%;
   padding-right: 65px;
+}
+
+.open-chat {
+  text-decoration: none;
+  font-size: 20px;
+}
+
+.message-status {
+  position: relative;
+}
+
+.message-status span {
+  position: absolute;
+  display: block;
+  height: 3px;
+  background: #4267b2;
+  margin: 0;
+}
+
+.hidden {
+  visibility: hidden;
+}
+
+.message-status span:nth-child(1) {
+  width: 7px;
+  transform: rotate(45deg);
+  bottom: 9px;
+  right: 13px;
+}
+
+.message-status span:nth-child(2) {
+  width: 15px;
+  transform: rotate(-45deg);
+  bottom: 12px;
+  right: 3px;
+}
+
+.read-tick span {
+  margin-bottom: 5px;
 }

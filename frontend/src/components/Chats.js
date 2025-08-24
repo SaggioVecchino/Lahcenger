@@ -44,14 +44,21 @@ export default function Chats({
             {friends.map((f) => (
               <li key={f.id}>
                 {f.username}{" "}
-                <button
-                  disabled={selectedFriends
-                    .map((friend) => friend.id)
-                    .includes(f.id)}
-                  onClick={() => openFriendChat(f)}
-                >
-                  Chat
-                </button>
+                {!selectedFriends.map((friend) => friend.id).includes(f.id) && (
+                  <a
+                    className="open-chat"
+                    disabled={selectedFriends
+                      .map((friend) => friend.id)
+                      .includes(f.id)}
+                    href="/"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      openFriendChat(f);
+                    }}
+                  >
+                    💬​
+                  </a>
+                )}
               </li>
             ))}
           </ul>
