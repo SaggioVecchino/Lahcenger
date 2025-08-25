@@ -18,11 +18,15 @@ export default function Message({
   useEffect(() => {
     if (isLastMessage && !meSender && realStatus !== "read") {
       const element = messageArea.current;
-      const handler = () => {
+      if (document.activeElement === element) {
         socket.emit("i_read_message", { message_id });
-      };
-      element.addEventListener("focus", handler);
-      return () => element.removeEventListener("focus", handler);
+      } else {
+        const handler = () => {
+          socket.emit("i_read_message", { message_id });
+        };
+        element.addEventListener("focus", handler);
+        return () => element.removeEventListener("focus", handler);
+      }
     }
   }, [
     meSender,
