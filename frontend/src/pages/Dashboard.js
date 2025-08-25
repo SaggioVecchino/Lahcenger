@@ -1,6 +1,5 @@
 import { useEffect, useState, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
-import io from "socket.io-client";
 import { useAuth } from "../AuthContext";
 import {
   ACCEPT_REQUEST,
@@ -10,7 +9,6 @@ import {
   API_FRIENDS_SEND_REQUEST,
   API_FRIENDS_SENT_REQUESTS,
   API_FRIENDS_INCOMING_REQUESTS,
-  BACKEND_URI,
   REJECT_REQUEST,
 } from "../services/constants";
 import FriendSearch from "../components/FriendSearch";
@@ -19,7 +17,7 @@ import Chats from "../components/Chats";
 import "../styles/dashboard.css";
 
 export default function Dashboard() {
-  const { token, user, logout, apiFetch, socket, updateSocket } = useAuth();
+  const { user, logout, apiFetch, socket } = useAuth();
   const [friends, setFriends] = useState([]);
   const [requests, setRequests] = useState([]);
   const [sentRequests, setSentRequests] = useState([]);
@@ -31,16 +29,7 @@ export default function Dashboard() {
     if (user == null) {
       navigate("/redirector");
     }
-  }, [user]);
-
-  useEffect(() => {
-    if (user != null) {
-      const s = io(`${BACKEND_URI}`, { query: { token } });
-      s.on("connected", () => {});
-      updateSocket(s);
-      return () => s.disconnect();
-    }
-  }, [user, token]);
+  }, [user, navigate]);
 
   useEffect(() => {
     if (user != null && socket != null && socket !== "") {
@@ -113,7 +102,7 @@ export default function Dashboard() {
     return () => {
       ignore = true;
     };
-  }, [user]);
+  }, [user, apiFetch]);
 
   const addFriend = useCallback(
     (other_user) => {

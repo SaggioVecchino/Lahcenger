@@ -9,6 +9,8 @@ import {
   extractTokenFromSession,
   extractUserFromSession,
 } from "./services/utils";
+import io from "socket.io-client";
+import { BACKEND_URI } from "./services/constants";
 
 const AuthContext = createContext();
 
@@ -18,10 +20,13 @@ export const AuthProvider = ({ children }) => {
   const [socket, setSocket] = useState(null);
 
   useEffect(() => {
-    if (user == null) {
-      logout();
+    if (user != null) {
+      const s = io(`${BACKEND_URI}`, { query: { token } });
+      s.on("connected", () => {});
+      setSocket(s);
+      return () => s.disconnect();
     }
-  }, [user]);
+  }, [user, token]);
 
   const updateSocket = (s) => {
     setSocket(s);
@@ -65,6 +70,12 @@ export const AuthProvider = ({ children }) => {
   const logout = () => {
     handleLogout();
   };
+
+  useEffect(() => {
+    if (user == null) {
+      logout();
+    }
+  }, [user]);
 
   const handleLogout = async () => {
     if (user != null) {
