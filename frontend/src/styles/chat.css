@@ -157,3 +157,31 @@
 .read-tick span {
   margin-bottom: 5px;
 }
+
+.message-status .hidden-to-help {
+  height: 30px;
+  width: 30px;
+  position: absolute;
+  opacity: 0;
+  bottom: 1px;
+  right: -1px;
+}
+
+.message-status .tooltip {
+  pointer-events: none;
+  position: absolute;
+  color: #4267b2;
+  text-transform: capitalize;
+  font-size: 14px;
+  bottom: 7px;
+  right: 2px;
+  opacity: 0;
+  color: black;
+  transition: all 0.8s cubic-bezier(0.12, 0.97, 0, 1.76);
+}
+
+.message-status .tooltip.show {
+  opacity: 100%;
+  color: #4267b2;
+  right: 23px;
+}
