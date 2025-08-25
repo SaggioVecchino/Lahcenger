@@ -76,50 +76,52 @@ export default function ChatWindow({ friend_recipient, closeChat }) {
   }, [messages]);
 
   return (
-    <div className="chat-window">
-      <header>
-        <div>{friend_recipient.username}</div>
-        <div>
-          <button onClick={() => closeChat(friend_recipient)}>
-            Close this chat
-          </button>
-          <button onClick={() => setMessages([])}>
-            Clear messages from UI
-          </button>
-        </div>
-      </header>
-      <div className="conversation" ref={conversation}>
-        {messages.map((message, index) => (
-          <Message
-            key={message.id}
-            message_id={message.id}
-            sender_id={message.sender_id}
-            content={message.content}
-            image_url={message.image_url}
-            message_status={message.status}
-            messageArea={messageInput}
-            isLastMessage={index === messages.length - 1}
-          />
-        ))}
-      </div>
-      <div className="chat-input-container">
-        <form onSubmit={submitMessage} ref={formMessage}>
-          <textarea
-            ref={messageInput}
-            rows={3}
-            className="chat-input"
-            value={msgContent}
-            onChange={(e) => setMsgContent(e.target.value)}
-            placeholder="Type message"
-          />
-          <div className="send-message-button">
-            <div>
-              <a href="/" onClick={submitMessage}>
-                📨
-              </a>
-            </div>
+    <div className="chat-window-container">
+      <div className="chat-window">
+        <header>
+          <div>{friend_recipient.username}</div>
+          <div>
+            <button onClick={() => closeChat(friend_recipient)}>
+              Close this chat
+            </button>
+            <button onClick={() => setMessages([])}>
+              Clear messages from UI
+            </button>
           </div>
-        </form>
+        </header>
+        <div className="conversation" ref={conversation}>
+          {messages.map((message, index) => (
+            <Message
+              key={message.id}
+              message_id={message.id}
+              sender_id={message.sender_id}
+              content={message.content}
+              image_url={message.image_url}
+              message_status={message.status}
+              messageArea={messageInput}
+              isLastMessage={index === messages.length - 1}
+            />
+          ))}
+        </div>
+        <div className="chat-input-container">
+          <form onSubmit={submitMessage} ref={formMessage}>
+            <textarea
+              ref={messageInput}
+              rows={3}
+              className="chat-input"
+              value={msgContent}
+              onChange={(e) => setMsgContent(e.target.value)}
+              placeholder="Type message"
+            />
+            <div className="send-message-button">
+              <div>
+                <a href="/" onClick={submitMessage}>
+                  📨
+                </a>
+              </div>
+            </div>
+          </form>
+        </div>
       </div>
     </div>
   );

@@ -1,7 +1,16 @@
-.chat-window {
-  margin: 5px auto;
-  margin-bottom: 30px;
+.chat-window-container {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
   max-width: 1400px;
+  margin: 0 auto;
+}
+
+.chat-window {
+  margin: 5px 5px 30px 5px;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .chat-window header {
@@ -12,7 +21,7 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  margin-bottom: 2px;
+  margin: 2px 0;
 }
 
 .me-sender,
