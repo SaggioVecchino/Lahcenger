@@ -28,12 +28,14 @@ export default function LoginSignupForm({ onSubmit, isLoginPage }) {
           onChange={(e) => setUsername(e.target.value)}
           placeholder="Username"
           autoCapitalize="none"
+          autoComplete="username"
         />
         <input
           type="password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
           placeholder="Password"
+          autoComplete="current-password"
         />
         <button type="submit">{isLoginPage ? "Login" : "Signup"}</button>
         <a
