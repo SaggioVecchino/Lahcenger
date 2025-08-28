@@ -15,8 +15,8 @@ import { BACKEND_URI } from "./services/constants";
 const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
-  const [token, setToken] = useState(extractTokenFromSession());
-  const [user, setUser] = useState(extractUserFromSession());
+  const [token, setToken] = useState(extractTokenFromSession);
+  const [user, setUser] = useState(extractUserFromSession);
   const [socket, setSocket] = useState(null);
 
   useEffect(() => {
