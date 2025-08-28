@@ -9,6 +9,14 @@ header {
   align-items: center;
 }
 
+div.header-container {
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+}
+
 header h2 {
   margin: 0;
   font-size: 1.5em;
@@ -21,8 +29,7 @@ header h2 {
 
 .logout-btn {
   overflow: hidden;
-  width: 33vw;
-  max-width: 200px;
+  width: 200px;
 }
 
 .logout-btn a {
@@ -43,7 +50,7 @@ header h2 {
   color: darkblue;
 }
 
-@media (max-width: 400px) {
+@media (max-width: 600px) {
   .logout-btn {
     width: 30px;
   }

@@ -299,7 +299,6 @@ export default function Dashboard() {
             onCanceledRequest={handleCanceledRequestEvent}
             onReceivedRequest={handleReceivedRequestEvent}
           />
-          <h2>{user.username}</h2>
           <div className="logout-btn">
             <a href="/" onClick={handleLogout}>
               👋 Logout
@@ -307,6 +306,11 @@ export default function Dashboard() {
           </div>
         </header>
 
+        <div className="header-container">
+          <div>
+            <h2>{user.username}</h2>
+          </div>
+        </div>
         <Requests
           sentRequests={sentRequests}
           incomingRequests={requests}
