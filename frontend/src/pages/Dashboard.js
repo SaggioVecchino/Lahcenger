@@ -320,9 +320,9 @@ export default function Dashboard() {
           openFriendChat={openFriendChat}
           closeFriendChat={closeFriendChat}
         />
-        <h1>
+        {/* <h1>
           <a href="/test">Go to test page</a>
-        </h1>
+        </h1> */}
       </div>
     )
   );
