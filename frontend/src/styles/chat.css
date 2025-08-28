@@ -95,22 +95,30 @@
 }
 
 .send-message-button {
-  display: inline-block;
+  display: flex;
+  position: relative;
+  justify-content: center;
+  align-items: center;
 }
 
 .send-message-button > div {
+  position: absolute;
   display: flex;
-  width: 0;
+  right: 15px;
+  align-items: center;
+  justify-content: center;
 }
 
 .send-message-button a {
   box-sizing: border-box;
   text-decoration: none;
-  color: white;
-  font-size: 2.6em;
-  position: relative;
-  bottom: 15px;
-  right: 60px;
+  display: block;
+}
+
+.send-message-button img {
+  width: 30px;
+  height: 30px;
+  display: block;
 }
 
 .chat-input-container {
@@ -125,7 +133,7 @@
 
 .chat-input {
   width: 100%;
-  padding-right: 65px;
+  padding-right: 60px;
 }
 
 .open-chat {
