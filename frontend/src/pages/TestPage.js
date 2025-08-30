@@ -1,7 +1,4 @@
-import { useAuth } from "../AuthContext";
-
 export default function TestPage() {
-  const { user } = useAuth();
   return (
     <div>
       <h1>Test page</h1>
