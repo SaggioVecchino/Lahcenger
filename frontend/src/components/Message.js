@@ -18,7 +18,10 @@ export default function Message({
   useEffect(() => {
     if (isLastMessage && !meSender && realStatus !== "read") {
       const element = messageArea.current;
-      if (document.activeElement === element) {
+      if (
+        document.activeElement === element &&
+        document.visibilityState === "visible"
+      ) {
         socket.emit("i_read_message", { message_id });
       } else {
         const handler = () => {
