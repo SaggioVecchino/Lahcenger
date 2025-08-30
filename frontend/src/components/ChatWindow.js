@@ -46,7 +46,6 @@ export default function ChatWindow({ friend_recipient, closeChat }) {
   };
 
   useEffect(() => {
-    // const element_form = formMessage.current;
     const handler = (e) => {
       if (e.key === "Enter" && !e.shiftKey) {
         submitMessage(e); //This will contain prevent default

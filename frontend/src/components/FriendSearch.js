@@ -55,7 +55,6 @@ export default function FriendSearch({
     if (loading) return;
     setLoading(true);
     searchRef.current[1].style.visibility = "visible";
-    // await sleep(500);
     try {
       const res = await apiFetch(
         `${API_USERS_SEARCH}${new URLSearchParams({

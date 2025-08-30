@@ -5,7 +5,6 @@ import {
   API_LOGIN,
 } from "./services/constants";
 import {
-  // sleep,
   extractTokenFromSession,
   extractUserFromSession,
 } from "./services/utils";
@@ -83,14 +82,12 @@ export const AuthProvider = ({ children }) => {
         deleteSessionInfos();
       });
     }
-    // deleteSessionInfos();
   };
 
   const apiFetch = async (url, opts = {}) => {
     if (token == null || token === "") return;
     if (url === `${API_LOGOUT}` && user != null) return;
     if (url !== `${API_LOGOUT}/logout` && user == null) return;
-    // await sleep(100); // Not the sexiest solution
     try {
       let res = await fetch(url, {
         ...opts,
