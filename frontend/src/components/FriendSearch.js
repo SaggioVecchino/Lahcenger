@@ -1,6 +1,5 @@
 import { useEffect, useState, useRef } from "react";
 import { useAuth } from "../AuthContext";
-import { sleep } from "../services/utils";
 import { useClickOutside } from "../services/utils";
 import { ResultPersonSearch } from "./ResultPersonSearch";
 import { API_USERS_SEARCH } from "../services/constants";
