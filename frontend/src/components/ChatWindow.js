@@ -3,7 +3,7 @@ import { useAuth } from "../AuthContext";
 import { API_MESSAGES_HISTORY } from "../services/constants";
 import Message from "./Message";
 import "../styles/chat.css";
-import send_icon_button from "../images/send-icon.png";
+import send_icon_button from "../assets/send-icon.png";
 
 export default function ChatWindow({ friend_recipient, closeChat }) {
   const { apiFetch, socket, user } = useAuth();

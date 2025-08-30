@@ -1,6 +1,8 @@
-import { useEffect } from "react";
+import { useEffect, useState, useRef } from "react";
 import ChatWindow from "./ChatWindow";
 import { useAuth } from "../AuthContext";
+
+import notificationSound from "../assets/notification.mp3";
 
 export default function Chats({
   friends,
@@ -9,9 +11,46 @@ export default function Chats({
   closeFriendChat,
 }) {
   const { user, socket } = useAuth();
+
+  const [isPlaying, setIsPlaying] = useState(false);
+  const audioRef = useRef(null);
+
+  useEffect(() => {
+    audioRef.current = new Audio();
+    audioRef.current.src = notificationSound;
+
+    return () => {
+      if (audioRef.current) {
+        audioRef.current.pause();
+        audioRef.current = null;
+      }
+    };
+  }, []);
+
+  const playNotificationSound = async () => {
+    try {
+      setIsPlaying(true);
+      console.log("Will play sound");
+      await audioRef.current.play();
+      setTimeout(() => setIsPlaying(false), 100);
+      console.log("Done !");
+    } catch (error) {
+      console.error("Error playing notification sound:", error);
+      setIsPlaying(false);
+    }
+  };
+
+  const checkConditionAndNotify = async () => {
+    if (document.visibilityState === "visible" || isPlaying) {
+      return;
+    }
+    console.log("Conditions met !");
+    await playNotificationSound();
+  };
+
   useEffect(() => {
     if (socket != null && user != null) {
-      const handler = (payload) => {
+      const handler = async (payload) => {
         const { sender_id, recipient_id, sender_username } = payload;
         let other_user;
         if (user.id === sender_id) {
@@ -28,6 +67,7 @@ export default function Chats({
         ) {
           openFriendChat(other_user);
         }
+        await checkConditionAndNotify();
       };
 
       socket.on("new_message", handler);
