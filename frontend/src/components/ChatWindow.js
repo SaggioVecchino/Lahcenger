@@ -3,7 +3,7 @@ import { useAuth } from "../AuthContext";
 import { API_MESSAGES_HISTORY } from "../services/constants";
 import Message from "./Message";
 import "../styles/chat.css";
-import send_icon_button from "../assets/send-icon.png";
+import sendIconButton from "../assets/sendIcon.png";
 
 export default function ChatWindow({ friend_recipient, closeChat }) {
   const { apiFetch, socket, user } = useAuth();
@@ -116,7 +116,7 @@ export default function ChatWindow({ friend_recipient, closeChat }) {
             <div className="send-message-button">
               <div>
                 <a href="/" onClick={submitMessage}>
-                  <img src={send_icon_button} alt="send button" />
+                  <img src={sendIconButton} alt="send button" />
                 </a>
               </div>
             </div>
