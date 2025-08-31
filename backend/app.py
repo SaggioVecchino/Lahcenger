@@ -63,13 +63,12 @@ class FriendRequest(db.Model):
     status = db.Column(
         db.String(10), default="pending"
     )  # pending, accepted, rejected, canceled
-    created_at = (db.Column(db.DateTime, default=now_utc),)
+    created_at = db.Column(db.DateTime, default=now_utc)
     updated_at = db.Column(
         db.DateTime,
         default=now_utc,
         onupdate=now_utc,
     )
-
 
 class Friendship(db.Model):
     id = db.Column(db.String(36), primary_key=True, default=lambda: str(uuid.uuid4()))
