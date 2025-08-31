@@ -85,6 +85,11 @@ class Message(db.Model):
     image_path = db.Column(db.String(400), nullable=True)
     status = db.Column(db.String(10), default="sent")  # sent, received, read
     created_at = db.Column(db.DateTime, default=now_utc)
+    updated_at = db.Column(
+        db.DateTime,
+        default=now_utc,
+        onupdate=now_utc,
+    )
 
 
 # -----------------------
