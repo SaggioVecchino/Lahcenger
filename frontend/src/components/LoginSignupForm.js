@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import "../styles/login_signup.css";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../AuthContext";
+import lahcengerLogo from "../assets/LahcengerLogo.png";
 
 export default function LoginSignupForm({ onSubmit, isLoginPage }) {
   const [username, setUsername] = useState("");
@@ -22,6 +23,7 @@ export default function LoginSignupForm({ onSubmit, isLoginPage }) {
 
   return (
     <div className="container-center-sub height-filler bg-fb-blue min-width-300">
+      <img src={lahcengerLogo} alt="Lahcenger Logo" id="top-logo" />
       <form onSubmit={handleSubmit} className="login-signup">
         <input
           value={username}

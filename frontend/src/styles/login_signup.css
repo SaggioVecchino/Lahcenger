@@ -1,3 +1,8 @@
+#top-logo {
+  height: 150px;
+  margin-bottom: 50px;
+}
+
 .login-signup button {
   margin-top: 5px;
 }
