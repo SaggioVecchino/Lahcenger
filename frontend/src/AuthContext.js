@@ -86,8 +86,7 @@ export const AuthProvider = ({ children }) => {
 
   const apiFetch = async (url, opts = {}) => {
     if (token == null || token === "") return;
-    if (url === `${API_LOGOUT}` && user != null) return;
-    if (url !== `${API_LOGOUT}/logout` && user == null) return;
+    if (url !== `${API_LOGOUT}` && user == null) return;
     try {
       let res = await fetch(url, {
         ...opts,
