@@ -37,7 +37,14 @@ export default function Chats({
       socket.on("new_message", handler);
       return () => socket.off("new_message", handler);
     }
-  }, [user, socket, friends, selectedFriends, openFriendChat]);
+  }, [
+    user,
+    socket,
+    friends,
+    selectedFriends,
+    openFriendChat,
+    checkConditionAndNotify,
+  ]);
 
   return (
     <>
