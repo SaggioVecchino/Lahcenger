@@ -10,7 +10,6 @@ export const BACKEND_URI = (
         BACKEND_IS_HTTPS ? "https" : "http"
       }://${BACKEND_URI_WITHOUT_PORT}:${BACKEND_URI_PORT}`
 ).replace(/\/$/, "");
-console.log(BACKEND_URI);
 export const LOCAL_STORAGE_NAME = "user_infos";
 export const ACCEPT_REQUEST = "accept";
 export const REJECT_REQUEST = "reject";
