@@ -20,7 +20,8 @@ export default function Message({
       const element = messageArea.current;
       if (
         document.activeElement === element &&
-        document.visibilityState === "visible"
+        document.visibilityState === "visible" &&
+        document.hasFocus()
       ) {
         socket.emit("i_read_message", { message_id });
       } else {
