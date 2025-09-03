@@ -1,6 +1,6 @@
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState } from "react";
 import { useAuth } from "../AuthContext";
-import { useClickOutside } from "../services/utils";
+import useClickOutside from "../hooks/useClickOutside";
 import { ResultPersonSearch } from "./ResultPersonSearch";
 import { API_USERS_SEARCH } from "../services/constants";
 
@@ -22,7 +22,17 @@ export default function FriendSearch({
   const [loading, setLoading] = useState(false);
   const [resultsCleared, setResultsCleared] = useState(true);
   const [results, setResults] = useState([]);
-  const searchRef = useRef([]);
+  const [keepFocus, setKeepFocus] = useState(false);
+
+  const clearSearchResults = () => {
+    searchRef.current[1].style.visibility = "hidden";
+    setResultsCleared(true);
+    setKeepFocus(false);
+    setResults([]);
+    setQuery("");
+  };
+
+  const searchRef = useClickOutside(clearSearchResults, keepFocus);
 
   const socketHandlers = [
     { event: "request_accepted", handler: onAcceptedSentRequest },
@@ -30,7 +40,6 @@ export default function FriendSearch({
     { event: "request_canceled", handler: onCanceledRequest },
     { event: "new_request", handler: onReceivedRequest },
   ];
-  const [keepFocus, setKeepFocus] = useState(false);
 
   useEffect(() => {
     searchRef.current[1].style.visibility = "hidden";
@@ -102,18 +111,6 @@ export default function FriendSearch({
     }
     return <ResultPersonSearch user={other_user} addFriend={addFriend} />;
   };
-
-  const clearSearchResults = () => {
-    searchRef.current[1].style.visibility = "hidden";
-    setResultsCleared(true);
-    setKeepFocus(false);
-    setResults([]);
-    setQuery("");
-  };
-
-  useClickOutside(searchRef, () => {
-    if (keepFocus) clearSearchResults();
-  });
 
   return (
     <div>
