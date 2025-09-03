@@ -23,6 +23,7 @@ export default function FriendSearch({
   const [resultsCleared, setResultsCleared] = useState(true);
   const [results, setResults] = useState([]);
   const [keepFocus, setKeepFocus] = useState(false);
+  const searchRef = useClickOutside(() => clearSearchResults(), keepFocus);
 
   const clearSearchResults = () => {
     searchRef.current[1].style.visibility = "hidden";
@@ -31,8 +32,6 @@ export default function FriendSearch({
     setResults([]);
     setQuery("");
   };
-
-  const searchRef = useClickOutside(clearSearchResults, keepFocus);
 
   const socketHandlers = [
     { event: "request_accepted", handler: onAcceptedSentRequest },
