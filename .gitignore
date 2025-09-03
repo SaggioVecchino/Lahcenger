@@ -24,3 +24,6 @@
 
 
 /backend/app.db
+
+#env
+.env
