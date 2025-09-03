@@ -1,20 +1,13 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
+import useUnprotectedRoute from "../hooks/useUnprotectedRoute";
 import "../styles/login_signup.css";
-import { useNavigate } from "react-router-dom";
-import { useAuth } from "../AuthContext";
 import lahcengerLogo from "../assets/LahcengerLogo.png";
 
 export default function LoginSignupForm({ onSubmit, isLoginPage }) {
+  useUnprotectedRoute();
+
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-  const { user } = useAuth();
-  const navigate = useNavigate();
-
-  useEffect(() => {
-    if (user != null) {
-      navigate("/redirector");
-    }
-  });
 
   const handleSubmit = async (e) => {
     e.preventDefault();

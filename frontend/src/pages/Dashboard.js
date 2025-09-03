@@ -1,6 +1,6 @@
 import { useEffect, useState, useCallback } from "react";
-import { useNavigate } from "react-router-dom";
 import { useAuth } from "../AuthContext";
+import useProtectedRoute from "../hooks/useProtectedRoute";
 import {
   ACCEPT_REQUEST,
   API_FRIENDS_CANCEL_REQUEST,
@@ -17,19 +17,12 @@ import Chats from "../components/Chats";
 import "../styles/dashboard.css";
 
 export default function Dashboard() {
+  useProtectedRoute();
   const { user, logout, apiFetch, socket } = useAuth();
   const [friends, setFriends] = useState([]);
   const [requests, setRequests] = useState([]);
   const [sentRequests, setSentRequests] = useState([]);
   const [selectedFriends, setSelectedFriends] = useState([]);
-
-  const navigate = useNavigate();
-
-  useEffect(() => {
-    if (user == null) {
-      navigate("/redirector");
-    }
-  }, [user, navigate]);
 
   useEffect(() => {
     if (user != null && socket != null && socket !== "") {
