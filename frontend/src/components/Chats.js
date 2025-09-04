@@ -23,6 +23,7 @@ export default function Chats({
           other_user = other_user_tmp[0];
         } else {
           other_user = { id: sender_id, username: sender_username };
+          await checkConditionAndNotify();
         }
         if (
           !selectedFriends
@@ -31,7 +32,6 @@ export default function Chats({
         ) {
           openFriendChat(other_user);
         }
-        await checkConditionAndNotify();
       };
 
       socket.on("new_message", handler);
