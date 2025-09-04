@@ -293,7 +293,7 @@ export default function Dashboard() {
             onReceivedRequest={handleReceivedRequestEvent}
           />
           <div className="logout-btn">
-            <a href="/" onClick={handleLogout}>
+            <a href="/" onClick={logout}>
               👋 Logout
             </a>
           </div>
