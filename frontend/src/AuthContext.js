@@ -25,10 +25,6 @@ export const AuthProvider = ({ children }) => {
   const [socket, setSocket] = useState(null);
 
   useEffect(() => {
-    console.log(user, token, socket);
-  });
-
-  useEffect(() => {
     if (user != null) {
       const s = io(`${BACKEND_URI}`, { query: { token } });
       s.on("connected", () => {});
