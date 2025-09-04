@@ -16,6 +16,7 @@ export const REJECT_REQUEST = "reject";
 export const API_LOGOUT = `${BACKEND_URI}/logout`;
 export const API_LOGIN = `${BACKEND_URI}/login`;
 export const API_SIGNUP = `${BACKEND_URI}/signup`;
+export const API_CHECK_TOKEN = `${BACKEND_URI}/check_token`;
 export const API_FRIENDS_LIST = `${BACKEND_URI}/friends/list`;
 export const API_FRIENDS_INCOMING_REQUESTS = `${BACKEND_URI}/friends/incoming_requests`;
 export const API_FRIENDS_SENT_REQUESTS = `${BACKEND_URI}/friends/sent_requests`;

@@ -9,6 +9,7 @@ import {
   LOCAL_STORAGE_NAME,
   API_LOGOUT,
   API_LOGIN,
+  API_CHECK_TOKEN,
 } from "./services/constants";
 import {
   extractTokenFromSession,
@@ -23,6 +24,18 @@ export const AuthProvider = ({ children }) => {
   const [token, setToken] = useState(extractTokenFromSession);
   const [user, setUser] = useState(extractUserFromSession);
   const [socket, setSocket] = useState(null);
+
+  useEffect(() => {
+    if (token != null && token !== "") {
+      apiFetch(`${API_CHECK_TOKEN}`, undefined, undefined, false)
+        .then((res) => {
+          if (res.status !== 200) {
+            deleteSessionInfos();
+          }
+        })
+        .catch((err) => console.log(err));
+    }
+  }, []);
 
   useEffect(() => {
     if (user != null) {
@@ -99,7 +112,7 @@ export const AuthProvider = ({ children }) => {
   };
 
   const apiFetch = useCallback(
-    async (url, opts = {}, forcedToken = null) => {
+    async (url, opts = {}, forcedToken = null, jsonify = true) => {
       if (!resolveIfConflict()) {
         if (forcedToken == null) forcedToken = token;
         if (forcedToken == null || forcedToken === "") return;
@@ -114,10 +127,10 @@ export const AuthProvider = ({ children }) => {
             },
           });
           if ([401, 403].includes(res.status)) {
-            res = await res.json();
+            if (jsonify) res = await res.json();
             return res;
           }
-          res = await res.json();
+          if (jsonify) res = await res.json();
           return res;
         } catch (error) {}
       }

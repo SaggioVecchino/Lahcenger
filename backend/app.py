@@ -219,6 +219,12 @@ def logout():
     return jsonify({"message": "logged out"}), 200
 
 
+@app.route("/check_token", methods=["GET"])
+@cross_origin()
+@token_required
+def check_token(): #To check whether the token is valid
+    return jsonify({"message": "valid"}), 200
+
 # -----------------------
 # Routes - Users / Friends
 # -----------------------
