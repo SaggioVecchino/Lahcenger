@@ -138,16 +138,12 @@ export const AuthProvider = ({ children }) => {
     [resolveIfConflict, token, user]
   );
 
-  const handleLogout = useCallback(async () => {
+  const logout = useCallback(async () => {
     if (user != null) {
       await apiFetch(`${API_LOGOUT}`, { method: "POST" });
       deleteSessionInfos();
     }
   }, [user, deleteSessionInfos, apiFetch]);
-
-  const logout = useCallback(async () => {
-    await handleLogout();
-  }, [handleLogout]);
 
   useEffect(() => {
     if (user == null) {
