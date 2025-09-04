@@ -1,4 +1,10 @@
-import { createContext, useContext, useState, useEffect } from "react";
+import {
+  createContext,
+  useContext,
+  useState,
+  useEffect,
+  useCallback,
+} from "react";
 import {
   LOCAL_STORAGE_NAME,
   API_LOGOUT,
@@ -19,6 +25,10 @@ export const AuthProvider = ({ children }) => {
   const [socket, setSocket] = useState(null);
 
   useEffect(() => {
+    console.log(user, token, socket);
+  });
+
+  useEffect(() => {
     if (user != null) {
       const s = io(`${BACKEND_URI}`, { query: { token } });
       s.on("connected", () => {});
@@ -31,11 +41,33 @@ export const AuthProvider = ({ children }) => {
     setSocket(s);
   };
 
-  const deleteSessionInfos = () => {
-    localStorage.removeItem(LOCAL_STORAGE_NAME);
-    setUser(null);
-    setToken("");
-  };
+  const forceUpdateInfos = useCallback(() => {
+    setUser(extractUserFromSession());
+    setToken(extractTokenFromSession());
+  }, []);
+
+  const checkConflict = useCallback(() => {
+    const currentConnectedUser = extractUserFromSession();
+    if (currentConnectedUser == null && user != null) return true;
+    return currentConnectedUser != null && currentConnectedUser.id !== user?.id;
+  }, [user]);
+
+  const resolveIfConflict = useCallback(() => {
+    if (checkConflict()) {
+      alert("conflict detected, will force update");
+      forceUpdateInfos();
+      return true;
+    }
+    return false;
+  }, [checkConflict, forceUpdateInfos]);
+
+  const deleteSessionInfos = useCallback(() => {
+    if (!resolveIfConflict()) {
+      localStorage.removeItem(LOCAL_STORAGE_NAME);
+      setUser(null);
+      setToken("");
+    }
+  }, [resolveIfConflict]);
 
   const setSessionInfos = ({ token, id, username }) => {
     if (token == null || token === "") return;
@@ -48,6 +80,10 @@ export const AuthProvider = ({ children }) => {
   };
 
   const login = async (username, password) => {
+    if (resolveIfConflict()) {
+      alert("A session is already open");
+      return { success: true, message: "A session is already open" };
+    }
     const res = await fetch(`${API_LOGIN}`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -66,45 +102,49 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  const logout = () => {
-    handleLogout();
-  };
+  const apiFetch = useCallback(
+    async (url, opts = {}, forcedToken = null) => {
+      if (!resolveIfConflict()) {
+        if (forcedToken == null) forcedToken = token;
+        if (forcedToken == null || forcedToken === "") return;
+        if (url !== `${API_LOGOUT}` && user == null) return;
+        try {
+          let res = await fetch(url, {
+            ...opts,
+            headers: {
+              ...(opts.headers || {}),
+              Authorization: "Bearer " + forcedToken,
+              "Content-Type": "application/json",
+            },
+          });
+          if ([401, 403].includes(res.status)) {
+            res = await res.json();
+            return res;
+          }
+          res = await res.json();
+          return res;
+        } catch (error) {}
+      }
+    },
+    [resolveIfConflict, token, user]
+  );
+
+  const handleLogout = useCallback(async () => {
+    if (user != null) {
+      await apiFetch(`${API_LOGOUT}`, { method: "POST" });
+      deleteSessionInfos();
+    }
+  }, [user, deleteSessionInfos, apiFetch]);
+
+  const logout = useCallback(async () => {
+    await handleLogout();
+  }, [handleLogout]);
 
   useEffect(() => {
     if (user == null) {
       logout();
     }
-  }, [user]);
-
-  const handleLogout = async () => {
-    if (user != null) {
-      apiFetch(`${API_LOGOUT}`, { method: "POST" }).then(() => {
-        deleteSessionInfos();
-      });
-    }
-  };
-
-  const apiFetch = async (url, opts = {}) => {
-    if (token == null || token === "") return;
-    if (url !== `${API_LOGOUT}` && user == null) return;
-    try {
-      let res = await fetch(url, {
-        ...opts,
-        headers: {
-          ...(opts.headers || {}),
-          Authorization: "Bearer " + token,
-          "Content-Type": "application/json",
-        },
-      });
-      if (res.status === 401) {
-        deleteSessionInfos();
-        res = await res.json();
-        return;
-      }
-      res = await res.json();
-      return res;
-    } catch (error) {}
-  };
+  }, [user, logout]);
 
   return (
     <AuthContext.Provider
