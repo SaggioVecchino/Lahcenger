@@ -46,14 +46,17 @@ export default function Dashboard() {
     }
   }, [socket, user, selectedFriends, setSelectedFriends]);
 
-  const openFriendChat = (friend) => {
-    if (!selectedFriends.map((friend) => friend.id).includes(friend.id))
-      setSelectedFriends([...selectedFriends, friend]);
-  };
+  const openFriendChat = useCallback(
+    (friend) => {
+      if (!selectedFriends.map((friend) => friend.id).includes(friend.id))
+        setSelectedFriends([...selectedFriends, friend]);
+    },
+    [selectedFriends]
+  );
 
-  const closeFriendChat = (friend) => {
+  const closeFriendChat = useCallback((friend) => {
     setSelectedFriends((prev) => prev.filter((e) => e.id !== friend.id));
-  };
+  }, []);
 
   useEffect(() => {
     let ignore = false;
@@ -266,10 +269,6 @@ export default function Dashboard() {
     },
     [user, requests, setRequests, sentRequests]
   );
-
-  const handleLogout = async () => {
-    logout();
-  };
 
   return (
     user?.id && (

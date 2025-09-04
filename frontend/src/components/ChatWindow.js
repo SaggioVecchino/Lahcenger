@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState, useRef, useCallback } from "react";
 import { useAuth } from "../AuthContext";
 import { API_MESSAGES_HISTORY } from "../services/constants";
 import Message from "./Message";
@@ -13,7 +13,7 @@ export default function ChatWindow({ friend_recipient, closeChat }) {
   const conversation = useRef(null);
   const formMessage = useRef(null);
 
-  const sendMessage = () => {
+  const sendMessage = useCallback(() => {
     if (socket && friend_recipient) {
       socket.emit("send_message", {
         recipient_id: friend_recipient.id,
@@ -21,7 +21,7 @@ export default function ChatWindow({ friend_recipient, closeChat }) {
       });
       setMsgContent("");
     }
-  };
+  }, [friend_recipient, msgContent, socket]);
 
   useEffect(() => {
     let ignore = false;
@@ -38,12 +38,15 @@ export default function ChatWindow({ friend_recipient, closeChat }) {
     return () => {
       ignore = true;
     };
-  }, []);
+  }, [user, friend_recipient.id, apiFetch]);
 
-  const submitMessage = (e) => {
-    e.preventDefault();
-    sendMessage();
-  };
+  const submitMessage = useCallback(
+    (e) => {
+      e.preventDefault();
+      sendMessage();
+    },
+    [sendMessage]
+  );
 
   useEffect(() => {
     const handler = (e) => {
@@ -54,7 +57,7 @@ export default function ChatWindow({ friend_recipient, closeChat }) {
     const element_input = messageInput.current;
     element_input.addEventListener("keypress", handler);
     return () => element_input.removeEventListener("keypress", handler);
-  }, [sendMessage]);
+  }, [sendMessage, submitMessage]);
 
   useEffect(() => {
     if (socket != null) {
