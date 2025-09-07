@@ -767,6 +767,81 @@ def handle_read_message(data):
         payload_out = {"message_id": msg_id}
         emit("he_read_message", payload_out, room=room_sender, namespace="/")
 
+@socketio.on("i_am_writing", namespace="/")
+def handle_writing_message(data):
+    """
+    Expected data:
+    {
+      "recepient_id": int
+    }
+    Must been sent of message receiver.
+    """
+    token = request.args.get("token", None)
+    if not token:
+        emit("error", {"message": "not authenticated"}, namespace="/")
+        return
+    try:
+        payload = decode_token(token)
+    except Exception:
+        emit("error", {"message": "invalid token"}, namespace="/")
+        return
+    jti = payload.get("jti")
+    if is_jti_revoked(jti):
+        emit("error", {"message": "token revoked"}, namespace="/")
+        return
+    user = User.query.get(payload.get("user_id"))
+    if not user:
+        emit("error", {"message": "user not found"}, namespace="/")
+        return
+    recipient_id = data.get("recipient_id")
+    if not Friendship.query.filter_by(
+        user_id=user.id, friend_id=recipient_id
+    ).first():
+        emit("error", {"message": "you are not friends with this user"}, namespace="/")
+        return
+    
+    room_recipient = _user_room(recipient_id)
+    payload_out = {"sender_id": user.id}
+    emit("he_is_writing", payload_out, room=room_recipient, namespace="/")
+
+@socketio.on("i_stopped_writing", namespace="/")
+def handle_writing_message(data):
+    """
+    Expected data:
+    {
+      "recepient_id": int
+    }
+    Must been sent of message receiver.
+    """
+    token = request.args.get("token", None)
+    if not token:
+        emit("error", {"message": "not authenticated"}, namespace="/")
+        return
+    try:
+        payload = decode_token(token)
+    except Exception:
+        emit("error", {"message": "invalid token"}, namespace="/")
+        return
+    jti = payload.get("jti")
+    if is_jti_revoked(jti):
+        emit("error", {"message": "token revoked"}, namespace="/")
+        return
+    user = User.query.get(payload.get("user_id"))
+    if not user:
+        emit("error", {"message": "user not found"}, namespace="/")
+        return
+    recipient_id = data.get("recipient_id")
+    if not Friendship.query.filter_by(
+        user_id=user.id, friend_id=recipient_id
+    ).first():
+        emit("error", {"message": "you are not friends with this user"}, namespace="/")
+        return
+    
+    room_recipient = _user_room(recipient_id)
+    payload_out = {"sender_id": user.id}
+    emit("he_stopped_writing", payload_out, room=room_recipient, namespace="/")
+
+
 
 # -----------------------
 # CLI Helpers

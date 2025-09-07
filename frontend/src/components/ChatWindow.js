@@ -4,6 +4,7 @@ import { API_MESSAGES_HISTORY } from "../services/constants";
 import Message from "./Message";
 import "../styles/chat.css";
 import sendIconButton from "../assets/sendIcon.png";
+import useCurrentlyWriting from "../hooks/useCurrentlyWriting";
 
 export default function ChatWindow({ friend_recipient, closeChat }) {
   const { apiFetch, socket, user } = useAuth();
@@ -12,6 +13,12 @@ export default function ChatWindow({ friend_recipient, closeChat }) {
   const messageInput = useRef(null);
   const conversation = useRef(null);
   const formMessage = useRef(null);
+  const { heIsWriting } = useCurrentlyWriting(
+    messageInput,
+    socket,
+    user,
+    friend_recipient.id
+  );
 
   const sendMessage = useCallback(() => {
     if (socket && friend_recipient) {
@@ -82,7 +89,9 @@ export default function ChatWindow({ friend_recipient, closeChat }) {
     <div className="chat-window-container">
       <div className="chat-window">
         <header>
-          <div>{friend_recipient.username}</div>
+          <div>
+            {friend_recipient.username} {heIsWriting ? "writing" : ""}
+          </div>
           <div>
             <button onClick={() => closeChat(friend_recipient)}>
               Close this chat
