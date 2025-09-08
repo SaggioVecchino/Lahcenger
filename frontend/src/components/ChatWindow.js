@@ -13,6 +13,7 @@ export default function ChatWindow({ friend_recipient, closeChat }) {
   const messageInput = useRef(null);
   const conversation = useRef(null);
   const formMessage = useRef(null);
+  const isWritingDiv = useRef(null);
   const { heIsWriting } = useCurrentlyWriting(
     messageInput,
     socket,
@@ -85,12 +86,23 @@ export default function ChatWindow({ friend_recipient, closeChat }) {
     conversation.current.scrollTop = conversation.current.scrollHeight;
   }, [messages]);
 
+  useEffect(() => {
+    if (heIsWriting) {
+      if (
+        conversation.current.scrollHeight - conversation.current.scrollTop <
+        350
+      ) {
+        conversation.current.scrollTop = conversation.current.scrollHeight;
+      }
+    }
+  }, [heIsWriting]);
+
   return (
     <div className="chat-window-container">
       <div className="chat-window">
         <header>
           <div>
-            {friend_recipient.username} {heIsWriting ? "writing" : ""}
+            {friend_recipient.username} {heIsWriting ? "is writing..." : null}
           </div>
           <div>
             <button onClick={() => closeChat(friend_recipient)}>
@@ -114,6 +126,15 @@ export default function ChatWindow({ friend_recipient, closeChat }) {
               isLastMessage={index === messages.length - 1}
             />
           ))}
+          {heIsWriting && (
+            <div ref={isWritingDiv}>
+              <div className={"me-receiver-container"}>
+                <div className={"me-receiver is-writing"}>
+                  {friend_recipient.username} is writing...
+                </div>
+              </div>
+            </div>
+          )}
         </div>
         <div className="chat-input-container">
           <form onSubmit={submitMessage} ref={formMessage}>

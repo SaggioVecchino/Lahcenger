@@ -50,6 +50,10 @@ h3 {
   background: #575757;
 }
 
+.is-writing {
+  opacity: 0.4;
+}
+
 .me-sender-container,
 .me-receiver-container {
   display: flex;
