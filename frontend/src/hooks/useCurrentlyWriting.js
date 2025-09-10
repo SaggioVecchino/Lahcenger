@@ -80,7 +80,7 @@ export default function useCurrentlyWriting(
 
       return () => {
         element.removeEventListener("keyup", handlerIAmWriting);
-        socket.emit("i_stopped_writing", { sender_id: user.id });
+        socket.emit("i_stopped_writing", { recipient_id });
         clearInterval(timeoutIAmWriting.current);
         socket.off("he_is_writing", handlerHeIsWriting);
         socket.off("he_stopped_writing", handlerHeStoppedWriting);
