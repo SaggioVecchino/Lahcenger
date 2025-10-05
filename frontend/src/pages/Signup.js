@@ -2,12 +2,19 @@ import { useNavigate } from "react-router-dom";
 import { useAuth } from "../AuthContext";
 import LoginSignupForm from "../components/LoginSignupForm";
 import { API_SIGNUP } from "../services/constants";
+import { isPasswordAcceptable } from "../services/utils";
 
 export default function Signup() {
   const navigate = useNavigate();
   const { login } = useAuth();
 
   const handleSubmit = async (username, password) => {
+    if (!isPasswordAcceptable(password)) {
+      alert(
+        "password must be at least 8 characters and include both letters and numbers."
+      );
+      return;
+    }
     const res = await fetch(`${API_SIGNUP}`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },

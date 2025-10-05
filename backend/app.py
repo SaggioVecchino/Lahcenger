@@ -178,6 +178,15 @@ def token_required(f):
 # -----------------------
 # Routes - Auth
 # -----------------------
+
+def is_password_acceptable(password: str) -> bool:
+    if len(password) < 8:
+        return False
+    has_letter = any(c.isalpha() for c in password)
+    has_digit = any(c.isdigit() for c in password)
+    acceptable = has_letter and has_digit
+    return acceptable
+
 @app.route("/signup", methods=["POST"])
 @cross_origin()
 def signup():
@@ -188,6 +197,8 @@ def signup():
         return jsonify({"message": "username and password required"}), 400
     if User.query.filter_by(username=username).first():
         return jsonify({"message": "username already exists"}), 400
+    if not is_password_acceptable(password):
+        return jsonify({"message": "password must be at least 8 characters and include both letters and numbers."}), 400
     pw_hash = hash_password(password)
     user = User(username=username, password_hash=pw_hash)
     db.session.add(user)

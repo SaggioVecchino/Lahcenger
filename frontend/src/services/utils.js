@@ -16,3 +16,12 @@ export const extractTokenFromSession = () => {
   if (data?.token == null) return "";
   return data.token;
 };
+
+export const isPasswordAcceptable = (password) => {
+  if (password.length < 8) {
+    return false;
+  }
+  const hasLetter = /[a-zA-Z]/.test(password);
+  const hasDigit = /\d/.test(password);
+  return hasLetter && hasDigit;
+};
