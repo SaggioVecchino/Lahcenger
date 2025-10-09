@@ -8,7 +8,7 @@ export default function useCurrentlyWriting(
   const timeoutIAmWriting = useRef(null);
   const timeoutHeIsWriting = useRef(null);
 
-  const [lastTimeSocketSent, setLastTimeSocketSent] = useState(new Date(0));
+  const lastTimeSocketSent = useRef(new Date(0));
 
   const [heIsWriting, setHeIsWriting] = useState(false);
   const wait = useRef(false);
@@ -45,8 +45,8 @@ export default function useCurrentlyWriting(
           return;
         }
         const now = Date.now();
-        if (now - lastTimeSocketSent >= 750) {
-          setLastTimeSocketSent(now);
+        if (now - lastTimeSocketSent.current >= 750) {
+          lastTimeSocketSent.current = now;
           socket.emit("i_am_writing", { recipient_id });
           clearTimeout(timeoutIAmWriting.current);
           timeoutIAmWriting.current = setTimeout(() => {
