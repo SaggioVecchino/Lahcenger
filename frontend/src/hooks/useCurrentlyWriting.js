@@ -15,7 +15,8 @@ export default function useCurrentlyWriting(
 
   useEffect(() => {
     const element = watchableElement.current;
-    if (element && !wait) {
+    if (user == null || socket == null) return;
+    if (element) {
       const handlerHeIsWriting = (payload) => {
         if (wait) {
           setHeIsWriting(false);
@@ -23,7 +24,7 @@ export default function useCurrentlyWriting(
         }
         if (payload.sender_id !== recipient_id) return;
         setHeIsWriting(true);
-        clearInterval(timeoutHeIsWriting.current);
+        clearTimeout(timeoutHeIsWriting.current);
         timeoutHeIsWriting.current = setTimeout(() => {
           setHeIsWriting(false);
         }, 2500);
@@ -32,7 +33,7 @@ export default function useCurrentlyWriting(
       const handlerHeStoppedWriting = (payload) => {
         if (payload.sender_id !== recipient_id) return;
         setHeIsWriting(false);
-        clearInterval(timeoutHeIsWriting.current);
+        clearTimeout(timeoutHeIsWriting.current);
       };
 
       const handlerIAmWriting = (e) => {
@@ -47,7 +48,7 @@ export default function useCurrentlyWriting(
         if (now - lastTimeSocketSent >= 750) {
           setLastTimeSocketSent(now);
           socket.emit("i_am_writing", { recipient_id });
-          clearInterval(timeoutIAmWriting.current);
+          clearTimeout(timeoutIAmWriting.current);
           timeoutIAmWriting.current = setTimeout(() => {
             socket.emit("i_stopped_writing", { recipient_id });
           }, 1000);
@@ -56,7 +57,7 @@ export default function useCurrentlyWriting(
 
       const forceImNoMoreWriting = () => {
         socket.emit("i_stopped_writing", { recipient_id });
-        clearInterval(timeoutIAmWriting.current);
+        clearTimeout(timeoutIAmWriting.current);
       };
 
       const handlerNewMessage = (payload) => {
@@ -81,13 +82,13 @@ export default function useCurrentlyWriting(
       return () => {
         element.removeEventListener("keyup", handlerIAmWriting);
         socket.emit("i_stopped_writing", { recipient_id });
-        clearInterval(timeoutIAmWriting.current);
+        clearTimeout(timeoutIAmWriting.current);
         socket.off("he_is_writing", handlerHeIsWriting);
         socket.off("he_stopped_writing", handlerHeStoppedWriting);
         socket.off("new_message", handlerNewMessage);
       };
     }
-  }, [wait]);
+  }, [user, socket, watchableElement, recipient_id]);
 
   return { heIsWriting };
 }
