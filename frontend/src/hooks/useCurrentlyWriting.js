@@ -11,14 +11,14 @@ export default function useCurrentlyWriting(
   const [lastTimeSocketSent, setLastTimeSocketSent] = useState(new Date(0));
 
   const [heIsWriting, setHeIsWriting] = useState(false);
-  const [wait, setWait] = useState(false);
+  const wait = useRef(false);
 
   useEffect(() => {
     const element = watchableElement.current;
     if (user == null || socket == null) return;
     if (element) {
       const handlerHeIsWriting = (payload) => {
-        if (wait) {
+        if (wait.current) {
           setHeIsWriting(false);
           return;
         }
@@ -37,7 +37,7 @@ export default function useCurrentlyWriting(
       };
 
       const handlerIAmWriting = (e) => {
-        if (wait) {
+        if (wait.current) {
           setHeIsWriting(false);
           return;
         }
@@ -64,10 +64,10 @@ export default function useCurrentlyWriting(
         if (payload.sender_id === user?.id) {
           forceImNoMoreWriting();
         } else if (payload.recipient_id === user?.id) {
-          setWait(true);
+          wait.current = true;
           setHeIsWriting(false);
           setTimeout(() => {
-            setWait(false);
+            wait.current = false;
           }, 1500);
           handlerHeStoppedWriting(payload);
         }
