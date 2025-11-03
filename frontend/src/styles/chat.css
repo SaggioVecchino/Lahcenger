@@ -31,7 +31,7 @@ h3 {
 .me-sender,
 .me-receiver {
   min-width: 10px;
-  max-width: 500px;
+  max-width: 80%;
   margin: 2px 2px;
   padding: 8px;
   display: block;
