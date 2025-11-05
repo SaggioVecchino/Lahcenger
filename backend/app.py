@@ -816,7 +816,7 @@ def handle_writing_message(data):
     emit("he_is_writing", payload_out, room=room_recipient, namespace="/")
 
 @socketio.on("i_stopped_writing", namespace="/")
-def handle_writing_message(data):
+def handle_stopped_writing(data):
     """
     Expected data:
     {
