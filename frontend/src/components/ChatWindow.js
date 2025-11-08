@@ -1,5 +1,5 @@
 import { useEffect, useState, useRef, useCallback } from "react";
-import { useAuth } from "../AuthContext";
+import { useAuth } from "../contexts/AuthContext";
 import { API_MESSAGES_HISTORY } from "../services/constants";
 import Message from "./Message";
 import "../styles/chat.css";

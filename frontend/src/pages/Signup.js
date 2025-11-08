@@ -1,5 +1,5 @@
 import { useNavigate } from "react-router-dom";
-import { useAuth } from "../AuthContext";
+import { useAuth } from "../contexts/AuthContext";
 import LoginSignupForm from "../components/LoginSignupForm";
 import { API_SIGNUP } from "../services/constants";
 import { isPasswordAcceptable } from "../services/utils";

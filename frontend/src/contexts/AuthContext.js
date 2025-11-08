@@ -10,13 +10,13 @@ import {
   API_LOGOUT,
   API_LOGIN,
   API_CHECK_TOKEN,
-} from "./services/constants";
+  BACKEND_URI,
+} from "../services/constants";
 import {
   extractTokenFromSession,
   extractUserFromSession,
-} from "./services/utils";
+} from "../services/utils";
 import io from "socket.io-client";
-import { BACKEND_URI } from "./services/constants";
 
 const AuthContext = createContext();
 

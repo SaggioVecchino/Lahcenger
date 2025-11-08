@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import ChatWindow from "./ChatWindow";
-import { useAuth } from "../AuthContext";
+import { useAuth } from "../contexts/AuthContext";
 import useNotification from "../hooks/useNotification";
 
 export default function Chats({

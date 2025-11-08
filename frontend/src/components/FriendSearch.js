@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useAuth } from "../AuthContext";
+import { useAuth } from "../contexts/AuthContext";
 import useClickOutside from "../hooks/useClickOutside";
 import { ResultPersonSearch } from "./ResultPersonSearch";
 import { API_USERS_SEARCH } from "../services/constants";

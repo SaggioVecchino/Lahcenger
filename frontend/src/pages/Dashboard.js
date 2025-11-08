@@ -1,5 +1,5 @@
 import { useEffect, useState, useCallback } from "react";
-import { useAuth } from "../AuthContext";
+import { useAuth } from "../contexts/AuthContext";
 import useProtectedRoute from "../hooks/useProtectedRoute";
 import {
   ACCEPT_REQUEST,

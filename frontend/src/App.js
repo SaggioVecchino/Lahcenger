@@ -8,7 +8,7 @@ import Login from "./pages/Login";
 import Signup from "./pages/Signup";
 import Dashboard from "./pages/Dashboard";
 import Redirector from "./pages/Redirector";
-import { AuthProvider } from "./AuthContext";
+import { AuthProvider } from "./contexts/AuthContext";
 import TestPage from "./pages/TestPage";
 
 function App() {
