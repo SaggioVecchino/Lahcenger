@@ -2,6 +2,7 @@ import { useEffect } from "react";
 import ChatWindow from "./ChatWindow";
 import { useAuth } from "../contexts/AuthContext";
 import useNotification from "../hooks/useNotification";
+import { useSocket } from "../contexts/SocketContext";
 
 export default function Chats({
   friends,
@@ -9,7 +10,8 @@ export default function Chats({
   openFriendChat,
   closeFriendChat,
 }) {
-  const { user, socket } = useAuth();
+  const { user } = useAuth();
+  const { socket } = useSocket();
   const { checkConditionAndNotify } = useNotification();
 
   useEffect(() => {

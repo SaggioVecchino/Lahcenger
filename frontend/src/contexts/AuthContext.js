@@ -10,20 +10,17 @@ import {
   API_LOGOUT,
   API_LOGIN,
   API_CHECK_TOKEN,
-  BACKEND_URI,
 } from "../services/constants";
 import {
   extractTokenFromSession,
   extractUserFromSession,
 } from "../services/utils";
-import io from "socket.io-client";
 
 const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
   const [token, setToken] = useState(extractTokenFromSession);
   const [user, setUser] = useState(extractUserFromSession);
-  const [socket, setSocket] = useState(null);
 
   useEffect(() => {
     if (token != null && token !== "") {
@@ -36,19 +33,6 @@ export const AuthProvider = ({ children }) => {
         .catch((err) => console.log(err));
     }
   }, []);
-
-  useEffect(() => {
-    if (user != null) {
-      const s = io(`${BACKEND_URI}`, { query: { token } });
-      s.on("connected", () => {});
-      setSocket(s);
-      return () => s.disconnect();
-    }
-  }, [user, token]);
-
-  const updateSocket = (s) => {
-    setSocket(s);
-  };
 
   const forceUpdateInfos = useCallback(() => {
     setUser(extractUserFromSession());
@@ -152,9 +136,7 @@ export const AuthProvider = ({ children }) => {
   }, [user, logout]);
 
   return (
-    <AuthContext.Provider
-      value={{ token, user, login, logout, apiFetch, updateSocket, socket }}
-    >
+    <AuthContext.Provider value={{ token, user, login, logout, apiFetch }}>
       {children}
     </AuthContext.Provider>
   );

@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useAuth } from "../contexts/AuthContext";
 import MessageStatus from "./MessageStatus";
+import { useSocket } from "../contexts/SocketContext";
 
 export default function Message({
   message_id,
@@ -11,7 +12,8 @@ export default function Message({
   messageArea,
   isLastMessage,
 }) {
-  const { user, socket } = useAuth();
+  const { user } = useAuth();
+  const { socket } = useSocket();
   const [realStatus, setRealStatus] = useState(message_status);
   const meSender = user.id === sender_id;
 

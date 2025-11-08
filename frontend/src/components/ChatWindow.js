@@ -5,9 +5,11 @@ import Message from "./Message";
 import "../styles/chat.css";
 import sendIconButton from "../assets/sendIcon.png";
 import useCurrentlyWriting from "../hooks/useCurrentlyWriting";
+import { useSocket } from "../contexts/SocketContext";
 
 export default function ChatWindow({ friend_recipient, closeChat }) {
-  const { apiFetch, socket, user } = useAuth();
+  const { apiFetch, user } = useAuth();
+  const { socket } = useSocket();
   const [msgContent, setMsgContent] = useState("");
   const [messages, setMessages] = useState([]);
   const messageInput = useRef(null);

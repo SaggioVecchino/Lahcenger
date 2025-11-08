@@ -15,10 +15,12 @@ import FriendSearch from "../components/FriendSearch";
 import Requests from "../components/Requests";
 import Chats from "../components/Chats";
 import "../styles/dashboard.css";
+import { useSocket } from "../contexts/SocketContext";
 
 export default function Dashboard() {
   useProtectedRoute();
-  const { user, logout, apiFetch, socket } = useAuth();
+  const { user, logout, apiFetch } = useAuth();
+  const { socket } = useSocket();
   const [friends, setFriends] = useState([]);
   const [requests, setRequests] = useState([]);
   const [sentRequests, setSentRequests] = useState([]);

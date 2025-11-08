@@ -3,6 +3,7 @@ import { useAuth } from "../contexts/AuthContext";
 import useClickOutside from "../hooks/useClickOutside";
 import { ResultPersonSearch } from "./ResultPersonSearch";
 import { API_USERS_SEARCH } from "../services/constants";
+import { useSocket } from "../contexts/SocketContext";
 
 export default function FriendSearch({
   alreadyRequested,
@@ -17,7 +18,8 @@ export default function FriendSearch({
   onCanceledRequest,
   onReceivedRequest,
 }) {
-  const { apiFetch, socket } = useAuth();
+  const { apiFetch } = useAuth();
+  const { socket } = useSocket();
   const [query, setQuery] = useState("");
   const [loading, setLoading] = useState(false);
   const [resultsCleared, setResultsCleared] = useState(true);
