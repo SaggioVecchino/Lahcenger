@@ -70,6 +70,7 @@ class FriendRequest(db.Model):
         onupdate=now_utc,
     )
 
+
 class Friendship(db.Model):
     id = db.Column(db.String(36), primary_key=True, default=lambda: str(uuid.uuid4()))
     user_id = db.Column(db.String, db.ForeignKey("user.id"), nullable=False)
@@ -179,6 +180,7 @@ def token_required(f):
 # Routes - Auth
 # -----------------------
 
+
 def is_password_acceptable(password: str) -> bool:
     if len(password) < 8:
         return False
@@ -186,6 +188,7 @@ def is_password_acceptable(password: str) -> bool:
     has_digit = any(c.isdigit() for c in password)
     acceptable = has_letter and has_digit
     return acceptable
+
 
 @app.route("/signup", methods=["POST"])
 @cross_origin()
@@ -198,7 +201,14 @@ def signup():
     if User.query.filter_by(username=username).first():
         return jsonify({"message": "username already exists"}), 400
     if not is_password_acceptable(password):
-        return jsonify({"message": "password must be at least 8 characters and include both letters and numbers."}), 400
+        return (
+            jsonify(
+                {
+                    "message": "password must be at least 8 characters and include both letters and numbers."
+                }
+            ),
+            400,
+        )
     pw_hash = hash_password(password)
     user = User(username=username, password_hash=pw_hash)
     db.session.add(user)
@@ -233,8 +243,9 @@ def logout():
 @app.route("/check_token", methods=["GET"])
 @cross_origin()
 @token_required
-def check_token(): #To check whether the token is valid
+def check_token():  # To check whether the token is valid
     return jsonify({"message": "valid"}), 200
+
 
 # -----------------------
 # Routes - Users / Friends
@@ -778,6 +789,7 @@ def handle_read_message(data):
         payload_out = {"message_id": msg_id}
         emit("he_read_message", payload_out, room=room_sender, namespace="/")
 
+
 @socketio.on("i_am_writing", namespace="/")
 def handle_writing_message(data):
     """
@@ -805,15 +817,14 @@ def handle_writing_message(data):
         emit("error", {"message": "user not found"}, namespace="/")
         return
     recipient_id = data.get("recipient_id")
-    if not Friendship.query.filter_by(
-        user_id=user.id, friend_id=recipient_id
-    ).first():
+    if not Friendship.query.filter_by(user_id=user.id, friend_id=recipient_id).first():
         emit("error", {"message": "you are not friends with this user"}, namespace="/")
         return
-    
+
     room_recipient = _user_room(recipient_id)
     payload_out = {"sender_id": user.id}
     emit("he_is_writing", payload_out, room=room_recipient, namespace="/")
+
 
 @socketio.on("i_stopped_writing", namespace="/")
 def handle_stopped_writing(data):
@@ -842,16 +853,13 @@ def handle_stopped_writing(data):
         emit("error", {"message": "user not found"}, namespace="/")
         return
     recipient_id = data.get("recipient_id")
-    if not Friendship.query.filter_by(
-        user_id=user.id, friend_id=recipient_id
-    ).first():
+    if not Friendship.query.filter_by(user_id=user.id, friend_id=recipient_id).first():
         emit("error", {"message": "you are not friends with this user"}, namespace="/")
         return
-    
+
     room_recipient = _user_room(recipient_id)
     payload_out = {"sender_id": user.id}
     emit("he_stopped_writing", payload_out, room=room_recipient, namespace="/")
-
 
 
 # -----------------------
