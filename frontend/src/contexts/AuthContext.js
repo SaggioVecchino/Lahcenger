@@ -116,7 +116,7 @@ export const AuthProvider = ({ children }) => {
           }
           if (jsonify) res = await res.json();
           return res;
-        } catch (error) {}
+        } catch (error) { }
       }
     },
     [resolveIfConflict, token, user]

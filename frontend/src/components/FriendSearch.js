@@ -72,7 +72,7 @@ export default function FriendSearch({
         }).toString()}`
       );
       setResults(res);
-    } catch (error) {}
+    } catch (error) { }
     setResultsCleared(false);
     setLoading(false);
   };

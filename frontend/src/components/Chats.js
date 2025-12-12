@@ -69,7 +69,7 @@ export default function Chats({
                       openFriendChat(f);
                     }}
                   >
-                    💬​
+                    💬
                   </a>
                 )}
               </li>

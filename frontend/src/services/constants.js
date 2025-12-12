@@ -6,9 +6,8 @@ if (!process.env?.REACT_APP_BACKEND_URI) {
 export const BACKEND_URI = (
   process.env?.REACT_APP_BACKEND_URI
     ? process.env.REACT_APP_BACKEND_URI.replace(/\/$/, "")
-    : `${
-        BACKEND_IS_HTTPS ? "https" : "http"
-      }://${BACKEND_URI_WITHOUT_PORT}:${BACKEND_URI_PORT}`
+    : `${BACKEND_IS_HTTPS ? "https" : "http"
+    }://${BACKEND_URI_WITHOUT_PORT}:${BACKEND_URI_PORT}`
 ).replace(/\/$/, "");
 export const LOCAL_STORAGE_NAME = "user_infos";
 export const ACCEPT_REQUEST = "accept";

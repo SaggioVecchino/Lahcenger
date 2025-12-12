@@ -13,7 +13,7 @@ export const SocketProvider = ({ children }) => {
   useEffect(() => {
     if (user != null) {
       const s = io(`${BACKEND_URI}`, { query: { token } });
-      s.on("connected", () => {});
+      s.on("connected", () => { });
       setSocket(s);
       return () => s.disconnect();
     }
