@@ -4,13 +4,13 @@ import base64
 import datetime
 from functools import wraps
 
-from flask import Flask, request, jsonify, g, send_from_directory, abort
+from flask import Flask, request, jsonify, g, send_from_directory
 from flask_cors import CORS, cross_origin
 
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import or_
 from flask_migrate import Migrate
-from flask_socketio import SocketIO, emit, join_room, leave_room
+from flask_socketio import SocketIO, emit, join_room
 import bcrypt
 import jwt
 import uuid
